@@ -14,23 +14,23 @@ window = Tk()
 window.title("뻐스 - BBus")
 window.geometry("600x800+450+200")
 window.resizable(False, False)
-window.configure(bg='white')
+window.configure(bg='lightgray')
 
 # === load image ===
-searchImage = PhotoImage(file='image/search.png')  # search image
-filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
-emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
-mapImage = PhotoImage(file='image/map_icon2.png')  # map image
-emptymarkImage = PhotoImage(file='image/white_bookmark.png')  # mark image
-markImage = PhotoImage(file='image/bookmark.png')  # mark image
-telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
-logoImage = PhotoImage(file='image/뻐스.png')  # logo image
-graphImage = PhotoImage(file='image/trend.png')  # graph image
-noImage = PhotoImage(file='image/close.png')  # no image
-labelImage = PhotoImage(file='image/label.png')  # label image
-googleLinkImage = PhotoImage(file='image/google.png')  # label image
-naverImage = PhotoImage(file='image/naver.png')  # label image
-naverMapImage = PhotoImage(file='image/google_map.png')  # label image
+searchImage = PhotoImage(file='../../../Desktop/BBUS/image/search.png')  # search image
+filterImage = PhotoImage(file='../../../Desktop/BBUS/image/filter_icon.png')  # filter image
+emailImage = PhotoImage(file='../../../Desktop/BBUS/image/mail_icon3.png')  # mail image
+mapImage = PhotoImage(file='../../../Desktop/BBUS/image/map_icon2.png')  # map image
+emptymarkImage = PhotoImage(file='../../../Desktop/BBUS/image/white_bookmark.png')  # mark image
+markImage = PhotoImage(file='../../../Desktop/BBUS/image/bookmark.png')  # mark image
+telegramImage = PhotoImage(file='../../../Desktop/BBUS/image/telegram_icon.png')  # telegram image
+logoImage = PhotoImage(file='../../../Desktop/BBUS/image/뻐스.png')  # logo image
+graphImage = PhotoImage(file='../../../Desktop/BBUS/image/trend.png')  # graph image
+noImage = PhotoImage(file='../../../Desktop/BBUS/image/close.png')  # no image
+labelImage = PhotoImage(file='../../../Desktop/BBUS/image/label.png')  # label image
+googleLinkImage = PhotoImage(file='../../../Desktop/BBUS/image/google.png')  # label image
+naverImage = PhotoImage(file='../../../Desktop/BBUS/image/naver.png')  # label image
+naverMapImage = PhotoImage(file='../../../Desktop/BBUS/image/google_map.png')  # label image
 
 # === load font ===
 fontNormal = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
@@ -39,12 +39,11 @@ fontInfo = font.Font(window, size=10, family='G마켓 산스 TTF Medium')
 fontList = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
 
 # === shared datas ===
-info_text = None  # 노선 정보
-route_name = None # 노선 이름
-temp_window = None # 현재 윈도우
+info_text = None  # 정류소 정보
+#hospital_name = None
+station_name = None # 정류소 이름
 memo_text = None  # 메모
-MarkDict_Station = dict()  # 북마크 dict {정류소명:정류소 정보}
-MarkDict = dict()  # 북마크 dict {노선명 : 정보}
+MarkDict = dict()  # 북마크 dict {정류소명:정류소 정보}
 
 latitude = 0.0  # 위도
 longitude = 0.0  # 경도
@@ -55,6 +54,13 @@ city_list = ['선택안함', '가평군', '고양시', '과천시', '광명시',
              '이천시', '파주시', '평택시', '포천시', '하남시', '화성시']
 
 hList = [0 for i in city_list]
+
+
+
+
+# 인증키
+gggokrKey = '10c9c010f1c84f0380fdbcd4c7e01cd7'
+datagokrKey = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg=='
 
 # 마우스 좌표 정보 (graph.py에서 사용)
 mouse_x = 0
