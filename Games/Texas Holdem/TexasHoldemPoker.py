@@ -197,7 +197,7 @@ class TexasHoldemPoker:
         newCard = Card(self.cardDeck[self.deckN])
         self.deckN += 1
         self.dealer.addCard(newCard)
-        p = PhotoImage(file="../../../../Desktop/cards/b2fv.png")
+        p = PhotoImage(file="cards/b2fv.png")
         self.LcardsDealer.append(Label(self.window,image=p))
         self.LcardsDealer[self.player.inHand() - 1].image = p
         self.LcardsDealer[self.player.inHand() - 1].place(x=50+n*80,y=50)
