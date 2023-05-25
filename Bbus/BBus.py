@@ -10,13 +10,20 @@ functions
 # === import ===
 # from tkinter.tix import NoteBook
 from turtle import bgcolor
-from urllib.request import urlopen
 from server import window
 from tkinter import *
 from tkinter import font
 import tkinter.scrolledtext as st
 from tkinter.ttk import Notebook, Style
 from xml.etree import ElementTree
+
+# === 이미지 url 받아오기 ===
+# pip install pillow
+from io import BytesIO
+import urllib
+import urllib.request
+import PIL.Image
+import PIL.ImageTk
 
 import server
 from graph import *
@@ -28,47 +35,24 @@ from book_mark import *
 # === XML import ===
 import requests #pip install requests
 import xml.etree.ElementTree as ET
-import tkinter
 
 def open_new_window():
     pass
 
 # 검색 기능창 띄우기
 def SearchRoute():
-    global tempPage
-    tempPage = InitScreen()
-
-    clear_window()
-    field = '버스 노선'
-    window.title(field + " 검색 기능창")
-    window.geometry("600x800+450+200")
-    window.resizable(False, False)
-    window.configure(bg='white')
-
-    # === 검색어 입력 창 ===
-    global nameLabel
-    nameLabel = Label(window, text="버스 노선 검색", font=server.fontLabel, bg="white", image=server.labelImage, compound='center')
-
-    # 줄 맞추기 정보
-    nameLabel.place(x=20, y=30, width=200, height=100)
-
-
-    # === 검색어 입력 창 ===
-    global rKeyword
-    rKeyword = 0
-    search_text = Text(window, height=1, width=22)  # 세로 길이(height)를 조절
-    search_text.configure(font=("Helvetica", 27))  # 폰트 크기 조절
-    search_text.place(x=50, y=105)
-
     # 검색 버튼 누를 시 seatch_term에 문자열 저장
     def perform_search():
         search_term = search_text.get("1.0", END).strip()
-        print("search_term : ", search_term)
-        global SearchListBox
-        perform_search_route(search_term)
-        server.route_name = search_term
-        print("server.route_name",server.route_name)
-
+        if search_term.isdecimal():
+            print("search_term : ", search_term)
+            global SearchListBox
+            perform_search_route(search_term)
+            server.route_name = search_term
+            print("server.route_name",server.route_name)
+        else:
+            msgbox.showinfo("알림", "버스 번호를 제대로 입력해주십시오.")
+            # 확인 버튼 누르면 입력된 문자열 삭제 시키고 싶다.
     def perform_search_route(search_term):
         print("검색어:", search_term)
         # === List Box ===
@@ -105,11 +89,42 @@ def SearchRoute():
         SearchListBox.pack()
         SearchListBox.bind('<<ListboxSelect>>', event_for_listbox)
         SearchListBox.place(x=50, y=200)
+
+    global tempPage
+    tempPage = InitScreen()
+
+    clear_window()
+    field = '버스 노선'
+    window.title(field + " 검색 기능창")
+    window.geometry("600x800+450+200")
+    window.resizable(False, False)
+    window.configure(bg='white')
+
+    # === 검색어 입력 창 ===
+    global nameLabel
+    nameLabel = Label(window, text="버스 노선 검색", font=server.fontLabel, bg="white", image=server.labelImage, compound='center')
+
+    # 줄 맞추기 정보
+    nameLabel.place(x=20, y=30, width=200, height=100)
+
+
+    # === 검색어 입력 창 ===
+    global rKeyword
+    rKeyword = 0
+    search_text = Text(window, height=1, width=22)  # 세로 길이(height)를 조절
+    search_text.configure(font=("Helvetica", 27))  # 폰트 크기 조절
+    search_text.place(x=50, y=105)
+
+
     # === 검색 버튼 ===
     search_button = Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
                            cursor="hand2", overrelief="sunken", command=perform_search)
     search_button.place(x=500, y=100, width=50, height=50)
-
+    
+    # 홈버튼
+    global home
+    home = Button(window, text="home", bg="white", activebackground="dark grey", command=InitScreen)
+    home.place(x=400-30, y=20, width=100, height=30)
 
 def event_for_listbox(event):  # command for list box
     # 북마크버튼 부분
@@ -122,7 +137,6 @@ def event_for_listbox(event):  # command for list box
     global InfoLabel, ST
     global searchKey
     searchKey = server.route_name
-    print("diq : ", searchKey)
     selection = event.widget.curselection()
     if selection:  # 리스트 박스에서 클릭 발생 시
         index = selection[0]
@@ -160,8 +174,9 @@ def event_for_listbox(event):  # command for list box
                            #'\n\n' + '[운수업체명]' + '\n' + getStr(item.find('companyName')) + \
                           # '\n\n' + '[운수업체 전화번호]' + '\n' + getStr(item.find('companyTel'))
                 server.route_name = getStr(item.find('routeName').text)
+                print("리스트 클릭 : ", server.route_name)
 
-                    # 북마크 여부 표시
+        # 북마크 여부 표시
         if data in server.MarkDict:
             MarkButton.configure(image=server.markImage)
         else:
@@ -169,7 +184,7 @@ def event_for_listbox(event):  # command for list box
 
         # 선택된 정보 서버로 넘기기
         server.info_text = info
-        print(server.info_text)
+        #print(server.info_text)
 
         # 정보 부분 (notebook)
         global InfoLabel, ST, notebook
@@ -184,15 +199,16 @@ def event_for_listbox(event):  # command for list box
         # notebook page1: 노선 정보 출력
         ST = st.ScrolledText(window, font=server.fontInfo, cursor="arrow")
         notebook.add(ST, text="Info")
-
+        '''
         # notebook page2: 메모
         global memoST
-        frame3 = Frame(window, background='white', relief='flat', borderwidth=0)
-        memoST = st.ScrolledText(frame3, relief='raised', font=server.fontInfo)
+        new_window = Toplevel()
+        frame3 = Frame(new_window, background='blue', relief='flat', borderwidth=0)
+        memoST = st.ScrolledText(new_window, relief='raised', font=server.fontInfo)
         memoST.place(x=0, y=0, width=380, height=288)
-        memoButton = Button(frame3, text='북마크 저장', command=saveMemo, font=server.fontInfo, cursor="hand2")
+        memoButton = Button(new_window, text='북마크 저장', command=saveMemo, font=server.fontInfo, cursor="hand2")
         memoButton.place(x=0, y=288, width=380, height=30)
-
+        '''
         # bookmark data load
         dirpath = os.getcwd()
         if os.path.isfile(dirpath + '\mark'):
@@ -209,13 +225,22 @@ def event_for_listbox(event):  # command for list box
 
     def update_info_text(self, info_text):
         self.info_label.configure(text=info_text)
+def getImage_url():
+    # openapi로 이미지 url을 가져옴.
+    url = "http://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAzMTZfMTI1%2FMDAxNjc4OTU5NDE4NTY2.r9xPjvuruoQaah4h4ibiVAGOiOBqeuAEvj1Bk6dz6RMg.Rq98BCMB0f1x-Ehbce9MZ5ndEN7w2V74IJnzlWT--dkg.JPEG.viva_ssoo%2FIMG_9182.JPG"
+
+    with urllib.request.urlopen(url) as u:
+        raw_data = u.read()
+    im = PIL.Image.open(BytesIO(raw_data))
+    image_web = PIL.ImageTk.PhotoImage(im)
+    Label(window, image=image_web, height=400, width=400).pack()
 
 
 def saveMemo():  # 메모를 저장해 서버로 넘기는 함수
         if server.route_name:
-            server.memo_text = memoST.get("1.0", END)
+            #server.memo_text = memoST.get("1.0", END)
             # print (server.memo_text)
-            memoST.delete('1.0', END)
+            #memoST.delete('1.0', END)
             makeBookMark()
         else:
             msgbox.showinfo("알림", "목록에서 버스을 먼저 선택해주십시오.")
@@ -236,14 +261,10 @@ def clear_window():
     for widget in window.winfo_children():
         widget.destroy()
 
-    global tempPage
-    print(type(SearchRoute))
-    reset = Button(window, text="reset", bg="white", activebackground="dark grey", command=tempPage)
-    reset.place(x=500, y=0, width=100, height=20)
-
-    global home
-    home = Button(window, text="home", bg="white", activebackground="dark grey", command=InitScreen)
-    home.place(x=400, y=0, width=100, height=20)
+    # 뒤로 가기 버튼 ... (미완)
+    #reset = Button(window, text="reset", bg="white", activebackground="dark grey", command=tempPage)
+    #reset.place(x=500-30, y=20, width=100, height=30)
+    
 # === functions ===
 def InitScreen():  # 메인 GUI 창을 시작하는 함수
     clear_window()
@@ -287,11 +308,13 @@ def InitScreen():  # 메인 GUI 창을 시작하는 함수
                                cursor="hand2", overrelief="sunken", command=SearchRoute)
     LineSearchButton.place(x=400, y=600, width=buttonSize, height=buttonSize)
 
+    getImageButton = Button(window, font='Helvetica', text='이미지로드', command=getImage_url)
+    getImageButton.place(x=0, y=340, width=100, height=100)
 
-    button_clear = Button(window, text="Clear Window", command=clear_window)
-    button_clear.place(x=0, y=0, width=buttonSize, height=buttonSize)
-    button_clear.pack()
-
+    # 임시 clear 버튼
+    #button_clear = Button(window, text="Clear Window", command=clear_window)
+    #button_clear.place(x=0, y=0, width=buttonSize, height=buttonSize)
+    #button_clear.pack()
 
 def getStr(s):  # utitlity function: 문자열 내용 있을 때만 사용
     return '정보없음' if not s else s

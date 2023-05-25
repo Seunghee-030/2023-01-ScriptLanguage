@@ -43,7 +43,8 @@ info_text = None  # 노선 정보
 route_name = None # 노선 이름
 temp_window = None # 현재 윈도우
 memo_text = None  # 메모
-MarkDict = dict()  # 북마크 dict {정류소명:정류소 정보}
+MarkDict_Station = dict()  # 북마크 dict {정류소명:정류소 정보}
+MarkDict = dict()  # 북마크 dict {노선명 : 정보}
 
 latitude = 0.0  # 위도
 longitude = 0.0  # 경도

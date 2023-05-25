@@ -54,14 +54,14 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
     print(server.MarkDict.keys())
     i = 0
-    for hospital, info in server.MarkDict.items():
-        print(hospital)
-        listBox.insert(i, hospital)
+    for bus, info in server.MarkDict.items():
+        print(bus)
+        listBox.insert(i, bus)
         i = i + 1
 
     listBox.bind('<<ListboxSelect>>', showInfo)
     listBox.place(x = 10, y = 0, width=200, height=340)
-
+    print("showInfo : ", showInfo)
     ListScrollBar.place(x = 200+10, y = 0, width=20, height=340)
     ListScrollBar.config(command=listBox.yview, cursor="sb_v_double_arrow")
 
@@ -72,10 +72,10 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
     # 선택된 버스 삭제 버튼
     global deleteButton
-    deleteButton = Button(popup, font=fontList, text='북마크에서 선택된 버스 제외하기', command=deleteBusRoute)
+    deleteButton = Button(popup, font=fontList, text='북마크에서 선택된 버스 제외하기', command=deleteBusBookmark)
     deleteButton.place(x = 0, y = 340, width=800-200, height=30)
 
-def deleteBusRoute():       # 북마크에서 선택된 버스을 삭제하는 함수
+def deleteBusBookmark():       # 북마크에서 선택된 버스을 삭제하는 함수
     global ST
     if len(server.MarkDict) == 0:   # 북마크가 빈 상태에서 삭제 버튼을 누른 경우
         msgbox.showinfo("알림", "북마크가 비어있습니다.")
@@ -103,7 +103,6 @@ def showInfo(event):   # 버스 리스트박스에서 버스 선택 시 정보 �
             ST.delete('1.0', END)
             ST.insert(INSERT, info)
             ST.configure(state="disabled")  # 수정 불가능(읽기 전용)으로 변경
-
 
 def makeBookMark():
     # 북마크를 추가하는 함수
