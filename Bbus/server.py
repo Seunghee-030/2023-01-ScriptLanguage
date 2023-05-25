@@ -17,7 +17,7 @@ window.resizable(False, False)
 window.configure(bg='lightgray')
 
 # === load image ===
-searchImage = PhotoImage(file='image/search.png')  # search image
+searchImage = PhotoImage(file='image/little_search.png')  # search image
 filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
 emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
 mapImage = PhotoImage(file='image/map_icon2.png')  # map image
