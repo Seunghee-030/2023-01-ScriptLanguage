@@ -20,10 +20,10 @@ import tkinter.messagebox as msgbox
 isSatellite = True  # 현재 위성 모드인지, 노말 모드인지 확인하는 플래그
 
 # === load image ===
-satelliteImage = PhotoImage(file='image/satellite.png')  # 위성 아이콘
-normalImage = PhotoImage(file='image/normal_map.png')  # 기본 지도 아이콘
-hospitalImage = PhotoImage(file='image/hospital.png')  # 병원 아이콘
-searchImage = PhotoImage(file='image/little_search.png')  # 돋보기 아이콘
+satelliteImage = PhotoImage(file='../../../Desktop/BBUS/image/satellite.png')  # 위성 아이콘
+normalImage = PhotoImage(file='../../../Desktop/BBUS/image/normal_map.png')  # 기본 지도 아이콘
+hospitalImage = PhotoImage(file='../../../Desktop/BBUS/image/hospital.png')  # 병원 아이콘
+searchImage = PhotoImage(file='../../../Desktop/BBUS/image/little_search.png')  # 돋보기 아이콘
 
 
 # === functions ===
@@ -37,7 +37,7 @@ def onMapPopup():
     global popup
     popup = Toplevel()
     popup.geometry("800x600+100+100")
-    popup.title("<" + server.hospital_name + "> 의 지도")
+    popup.title("<" + server.station_name + "> 의 지도")
 
     fontNormal = font.Font(popup, size=18, family='G마켓 산스 TTF Medium')
 
@@ -51,24 +51,13 @@ def onMapPopup():
         map_widget.set_tile_server("https://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}&s=Ga", max_zoom=22)
         map_widget.place(x=0, y=0, width=800, height=550)
         map_widget.add_right_click_menu_command(label="Add Marker", command=add_marker_event, pass_coords=True)
-
         # 주소 위치지정
-        marker_1 = map_widget.set_position(server.latitude, server.longitude, marker=True, marker_color_outside="black",
-                                           marker_color_circle="white", text_color="black")  # 위도,경도 위치지정
-        marker_1.set_text(server.hospital_name)  # set new text
+        marker_1 = map_widget.set_position(float(server.latitude), float(server.longitude), marker=True, marker_color_outside="black", marker_color_circle="white", text_color="black") # 위도,경도 위치지정
+        marker_1.set_text(server.station_name) # set new text
+
 
         global addressLabel, InputButton, HospitalButton, SatButton
-        # 주소 입력 부분
-        addressLabel = Entry(popup, font=fontNormal, width=800, borderwidth=3, relief='ridge')
-        addressLabel.place(x=0, y=550, width=650, height=50)
 
-        InputButton = Button(popup, font=fontNormal, image=searchImage, command=onSearch, bg="white", cursor="hand2")
-        InputButton.place(x=650, y=550, width=50, height=50)
-
-        # 병원 버튼
-        HospitalButton = Button(popup, font=fontNormal, image=hospitalImage, command=onHospital, bg="white",
-                                cursor="hand2")
-        HospitalButton.place(x=700, y=550, width=50, height=50)
         # 위성 버튼
         SatButton = Button(popup, font=fontNormal, command=onSat, image=satelliteImage, bg="white", cursor="hand2")
         SatButton.place(x=750, y=550, width=50, height=50)
