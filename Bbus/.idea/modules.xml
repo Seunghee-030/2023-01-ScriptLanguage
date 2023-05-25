@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Bbus.iml" filepath="$PROJECT_DIR$/.idea/Bbus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/BBUS.iml" filepath="$PROJECT_DIR$/.idea/BBUS.iml" />
     </modules>
   </component>
 </project>

@@ -238,48 +238,84 @@ def open_bus_window() :
     Button(window, image=server.searchImage, bg="white", activebackground="dark grey", cursor="hand2", overrelief="sunken", command=readyto_search_busRoute).place(x=525, y=77, width=40, height=40)
 
 def readyto_search_busRoute():
-    global busRoute_search_text, busRoute_search_term
+    global busRoute_search_text, busRoute_search_term, passLoad
 
     busRoute_search_term = busRoute_search_text.get("1.0", END).strip()
+    passLoad = 0
 
     search_bus()
 def readyto_search_busRoute_fromStation():
-    global busRoute_search_text, busRoute_search_term, index, busRoutes_items
+    global busRoute_search_text, busRoute_search_term, index, busRoutes_items, passLoad
 
-    busRoute_search_term = busRoutes_items[index + 1][0].findtext("routeName")
-
+    busRoute_search_term = busRoutes_items[index + 1][0].findtext("routeId")
+    print(busRoute_search_term, type(busRoute_search_term))
+    passLoad = 1
     search_bus()
+
 # 버스 검색어 입력 및 리스트 생성
 def search_bus():
-    global busRoute_search_term, busRoute_items
+    global busRoute_search_term, busRoute_items, passLoad
+    busRoute_items = []
     print("검색어:", busRoute_search_term)
+    if passLoad == 0:
+        # === [routeId]를 기준 ===
+        url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteList'
+        params_busRoute = {
+            'serviceKey': 'xmFs5IrPwwEJmSe8Pu6PcPO8P6+iVF5mfCz/yTZ3WPmUjST6KEDtbhXDh9hAil7MP4Mhgli8CiW91OzNPR5N+A==', \
+            'keyword': busRoute_search_term}
 
-    # === [routeId]를 기준 ===
-    url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteList'
-    params_busRoute = {
-        'serviceKey': 'xmFs5IrPwwEJmSe8Pu6PcPO8P6+iVF5mfCz/yTZ3WPmUjST6KEDtbhXDh9hAil7MP4Mhgli8CiW91OzNPR5N+A==', \
-        'keyword': busRoute_search_term}
+        busRoute_response = requests.get(url_busRoute, params=params_busRoute)
+        busRoute_root = ET.fromstring(busRoute_response.text)
+        busRoute_items = busRoute_root.findall(".//busRouteList")
 
-    busRoute_response = requests.get(url_busRoute, params=params_busRoute)
-    busRoute_root = ET.fromstring(busRoute_response.text)
-    busRoute_items = busRoute_root.findall(".//busRouteList")
+        # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
+        # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
+        busRoute_scrollbar = Scrollbar(window)
+        busRoute_scrollbar.place(x=560, y=150, width=20, height=250)
 
-    # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
-    # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-    busRoute_scrollbar = Scrollbar(window)
-    busRoute_scrollbar.place(x=560, y=150, width=20, height=250)
+        busRoute_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=busRoute_scrollbar.set)
+        busRoute_searchListBox.place(x=25, y=150, width=535, height=250)
 
-    busRoute_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=busRoute_scrollbar.set)
-    busRoute_searchListBox.place(x=25, y=150, width=535, height=250)
+        busRoute_scrollbar.config(command=busRoute_searchListBox.yview)
 
-    busRoute_scrollbar.config(command=busRoute_searchListBox.yview)
+        # === 리스트 박스[city_SearchListBox] 원소 채우기 ===
+        for i, item in enumerate(busRoute_items, start=1):
+            str = item.findtext("routeName") + " | " + item.findtext("regionName") + " | " +item.findtext("routeTypeName")
+            busRoute_searchListBox.insert(i, str)
+        busRoute_searchListBox.bind('<<ListboxSelect>>', show_busRouteInfo)
+    else:
+        # === [routeId]를 기준 ===
+        url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteInfoItem'
+        params_busRoute = {
+            'serviceKey': 'xmFs5IrPwwEJmSe8Pu6PcPO8P6+iVF5mfCz/yTZ3WPmUjST6KEDtbhXDh9hAil7MP4Mhgli8CiW91OzNPR5N+A==', \
+            'routeId': busRoute_search_term}
+        busRoute_response = requests.get(url_busRoute, params=params_busRoute)
+        busRoute_root = ET.fromstring(busRoute_response.text)
+        busRoute_items = busRoute_root.findall(".//busRouteInfoItem")
+        print(busRoute_items[0].findtext("routeName"))
 
-    # === 리스트 박스[city_SearchListBox] 원소 채우기 ===
-    for i, item in enumerate(busRoute_items, start=1):
-        str = item.findtext("routeName") + " | " + item.findtext("regionName") + " | " +item.findtext("routeTypeName")
-        busRoute_searchListBox.insert(i, str)
+        # 정보 부분 (notebook)
+        global InfoLabel, ST, notebook
+        busRoute_notebook = tkinter.ttk.Notebook(window)
+        busRoute_notebook.place(x=25, y=450, width=535, height=280)
+        style = tkinter.ttk.Style()
+        style.theme_use('default')
+        style.configure('TNotebook.Tab', background="gray")
+        style.map("TNotebook", background=[("selected", "gray")])
 
-    busRoute_searchListBox.bind('<<ListboxSelect>>', show_busRouteInfo)
+        ST = st.ScrolledText(window, font=server.fontInfo, cursor="arrow")
+        busRoute_notebook.add(ST, text="Info")
+
+        info = '[노선번호]' + '\n' + busRoute_items[0].findtext("routeName") + \
+               '\n\n' + '[노선아이디]' + '\n' + busRoute_items[0].findtext("routeId") + \
+               '\n\n' + '[노선유형명]' + '\n' + busRoute_items[0].findtext('routeTypeName') + \
+               '\n\n' + '[노선지역]' + '\n' + busRoute_items[0].findtext('regionName')
+
+        ST.configure(state="normal")  # 수정 가능으로 풀어놨다가,
+        ST.delete('1.0', END)
+        ST.insert(INSERT, info)
+        ST.configure(state="disabled")  # 수정 불가능(읽기 전용)으로 변경
+
 
 def show_busRouteInfo(event):
     global busRoute_items

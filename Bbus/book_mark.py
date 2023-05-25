@@ -47,7 +47,7 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
     dirpath = os.getcwd()
     if os.path.isfile(dirpath + '\mark'):
-        f = open('../../../Desktop/BBUS/mark', 'rb')
+        f = open('mark', 'rb')
         dic = pickle.load(f)
         f.close()
         server.MarkDict = dic
@@ -84,7 +84,7 @@ def deleteHospital():       # 북마크에서 선택된 병원을 삭제하는 �
         if selHospital in server.MarkDict:
             del server.MarkDict[selHospital]
 
-            f = open('../../../Desktop/BBUS/mark', 'wb')
+            f = open('mark', 'wb')
             pickle.dump(server.MarkDict, f)
             f.close()
             ST.delete('1.0', END)
@@ -118,17 +118,17 @@ def makeBookMark():
             dirpath = os.getcwd()
 
             if os.path.isfile(dirpath + '\mark'):
-                f = open('../../../Desktop/BBUS/mark', 'rb')
+                f = open('mark', 'rb')
                 server.MarkDict = pickle.load(f)
                 f.close()
 
                 server.MarkDict[server.hospital_name] = text
 
-                f = open('../../../Desktop/BBUS/mark', 'wb')
+                f = open('mark', 'wb')
                 pickle.dump(server.MarkDict, f)
                 f.close()
 
-                f = open('../../../Desktop/BBUS/mark', 'rb')
+                f = open('mark', 'rb')
                 server.MarkDict = pickle.load(f)
                 f.close()
 
@@ -136,7 +136,7 @@ def makeBookMark():
 
             else:
                 server.MarkDict[server.hospital_name] = text
-                f = open('../../../Desktop/BBUS/mark', 'wb')
+                f = open('mark', 'wb')
                 pickle.dump(server.MarkDict, f)
                 f.close()
 

@@ -20,10 +20,10 @@ import tkinter.messagebox as msgbox
 isSatellite = True  # 현재 위성 모드인지, 노말 모드인지 확인하는 플래그
 
 # === load image ===
-satelliteImage = PhotoImage(file='../../../Desktop/BBUS/image/satellite.png')  # 위성 아이콘
-normalImage = PhotoImage(file='../../../Desktop/BBUS/image/normal_map.png')  # 기본 지도 아이콘
-hospitalImage = PhotoImage(file='../../../Desktop/BBUS/image/hospital.png')  # 병원 아이콘
-searchImage = PhotoImage(file='../../../Desktop/BBUS/image/little_search.png')  # 돋보기 아이콘
+satelliteImage = PhotoImage(file='image/satellite.png')  # 위성 아이콘
+normalImage = PhotoImage(file='image/normal_map.png')  # 기본 지도 아이콘
+hospitalImage = PhotoImage(file='image/hospital.png')  # 병원 아이콘
+searchImage = PhotoImage(file='image/little_search.png')  # 돋보기 아이콘
 
 
 # === functions ===
