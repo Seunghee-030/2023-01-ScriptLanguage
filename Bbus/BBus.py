@@ -22,15 +22,13 @@ from server import window
 # ==== 필요한 전역 변수 선언 ====
 # 각 사이트 인증키
 cityList = server.city_list
-<<<<<<< HEAD
+
 TempFont = font.Font(window, size=25, weight='bold', family='DungGeunMo')
 smallFont = font.Font(window, size=10, weight='bold', family='DungGeunMo')
 standardFont = font.Font(window, size=15,  family='DungGeunMo')
 mainFont = font.Font(window, size=50, weight='bold', family='DungGeunMo', slant='italic')
 listFont = font.Font(window, size=25, family='DungGeunMo')
-=======
-TempFont = font.Font(window, size=20, weight='bold', family='DungGeunMo')
->>>>>>> a013b8959f63b75b398b1c0232235e061bb40b77
+
 
 # ====시/군 버튼 push====
 # 시/군 검색 윈도우 open
@@ -77,18 +75,16 @@ def search_city():
 
 
     # === 대기 멘트 ===
-    city_frame = Frame(window)
 
-
-    Label(city_frame, text="======================================================================", font=standardFont, bg='#000fa3',
+    Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=500, width=450, height=60)
-    Label(city_frame, text="[ SYSTEM ] :  검색어 - "+ city_search_term, font=standardFont, bg='#000fa3',
+    Label(window, text="[ SYSTEM ] :  검색어 - "+ city_search_term, font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=550, width=400, height=60)
-    Label(city_frame, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
+    Label(window, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=620, width=400, height=60)
 
     # === 유도 멘트 제공 ===
-    Label(city_frame, text="[ SYSTEM ] :  검색할 정류장을 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
+    Label(window, text="[ SYSTEM ] :  검색할 정류장을 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
         x=510, y=90, width=450, height=60)
 
     # === 검색어[city_search_term] 기준으로 경기도 버스 정류소 현황 데이터 load ===
@@ -101,13 +97,13 @@ def search_city():
 
     # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
     # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-    city_searchListBox = Listbox(city_frame, font=standardFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
+    city_searchListBox = Listbox(window, font=standardFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
     city_searchListBox.place(x=510, y=150, width=440, height=500)
 
-    city_yscrollbar = Scrollbar(city_frame)
+    city_yscrollbar = Scrollbar(window)
     city_yscrollbar.place(x=920, y=162, width=20, height=478)
 
-    city_xscrollbar = Scrollbar(city_frame, orient='horizontal')
+    city_xscrollbar = Scrollbar(window, orient='horizontal')
     city_xscrollbar.place(x=522, y=620, width=399, height=20)
 
     city_searchListBox.config(yscrollcommand=city_yscrollbar.set, xscrollcommand=city_xscrollbar)
@@ -120,16 +116,17 @@ def search_city():
         city_searchListBox.insert(i + 1, str)
 
     # === 버튼 누르면 정류장 상세 정보 출력을 위해 준비하는 함수로 이동 [readyto_search_BusStation_fromCity]===
-    Button(city_frame, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
            cursor="hand2", command=search_city).place(x=190, y=450, width=150, height=60)
-    Button(city_frame, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
            cursor="hand2", command=readyto_search_busStation_fromCity).place(x=800, y=650, width=150, height=60)
-    city_frame.pack()
+
     # === 다시 [city_ListBox] 눌렀다면, 대기 멘트들과 정류장 목록 삭제할 수 있도록 !!!
     city_ListBox.bind('<<ListboxSelect>>', resetTo_searchCity)
 
 def resetTo_searchCity(event):
     pass
+
 def readyto_search_busStation_fromCity():
     global selectedCity, city_search_term, city_searchListBox, busStation_search_term
     selectedCity = city_search_term
