@@ -1,14 +1,14 @@
-import tkinter as tk
+from tkinter import Tk, Label, Frame
 
-def get_selected_index():
-    index = citySearchListBox.curselection()
-    print(index)
+window = Tk()
 
-root = tk.Tk()
-citySearchListBox = tk.Listbox(root)
-citySearchListBox.pack()
+frame = Frame(window)
+frame.pack()
 
-button = tk.Button(root, text="Get Selected Index", command=get_selected_index)
-button.pack()
+label1 = Label(frame, text="Label 1")
+label1.pack()
 
-root.mainloop()
+label2 = Label(frame, text="Label 2")
+label2.pack()
+
+window.mainloop()

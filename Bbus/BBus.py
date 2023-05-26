@@ -22,7 +22,11 @@ from server import window
 # ==== 필요한 전역 변수 선언 ====
 # 각 사이트 인증키
 cityList = server.city_list
-TempFont = font.Font(window, size=20, weight='bold', family='온글잎 원슝')
+TempFont = font.Font(window, size=25, weight='bold', family='DungGeunMo')
+smallFont = font.Font(window, size=10, weight='bold', family='DungGeunMo')
+standardFont = font.Font(window, size=15,  family='DungGeunMo')
+mainFont = font.Font(window, size=50, weight='bold', family='DungGeunMo', slant='italic')
+listFont = font.Font(window, size=25, family='DungGeunMo')
 
 # ====시/군 버튼 push====
 # 시/군 검색 윈도우 open
@@ -31,28 +35,58 @@ def open_city_window():
     clear_window()
     window.title("시/군 검색 기능")
 
-    # === 시/군 검색어 입력 창 ===
-    global city_search_text
-    city_search_text = Text(window, height=1, width=30, font=TempFont)  # 세로 길이(height)를 조절
-    city_search_text.pack(pady=60)
+    Label(window, text="[ 시 / 군 검색 기능 ]", font=TempFont, compound='center', bg='#000fa3', fg='white').place(x=300, y=10, width=400, height=40)
+    Label(window, text="[ 시 / 군 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black',relief='raised').place(x=60, y=757, width=100, height=40)
+
+    # === 유도 멘트 제공 ===
+    Label(window, text="[ SYSTEM ] :  검색할 도시를 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
+        x=40, y=90, width=450, height=60)
+
+    # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
+    # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
+    global city_ListBox
+    city_ListBox = Listbox(window, font=listFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
+    city_ListBox.place(x=50, y=150, width=440, height=300)
+
+    city_scrollbar = Scrollbar(window)
+    city_scrollbar.place(x=460, y=162, width=20, height=276)
+
+    city_ListBox.config(yscrollcommand=city_scrollbar.set)
+    city_scrollbar.config(command=city_ListBox.yview)
+
+    # === 리스트 박스[city_ListBox] 원소 채우기 ===
+    for i, item in enumerate(cityList, start=1):
+        city_ListBox.insert(i + 1, item)
 
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey", cursor="hand2", overrelief="sunken", command=search_city).place(x=525, y=57, width=40, height=40)
 
-    # === 도시 목록 제공 ===
-    Label(window, font= server.fontList,text="가평군, 고양시, 과천시, 광명시, 광주시, \
-    구리시, 군포시, 김포시, 남양주시, 동두천시, \
-    부천시, 성남시, 수원시, 시흥시, 안산시, \
-    안성시, 안양시, 양주시, 양평군, 여주시, \
-    연천군, 오산시, 용인시, 의왕시, 의정부시, \
-    이천시, 파주시, 평택시, 포천시, 하남시, 화성시", wraplength=400).place(x=120, y=100)
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+                            cursor="hand2", command=search_city).place(x=190, y=450, width=150, height=60)
+
 # 시/군 검색어 입력 및 리스트 생성
 def search_city():
     # === 검색어 입력 ===
-    global city_search_text, city_search_term, city_searchListBox
-    city_search_term = city_search_text.get("1.0", END).strip()
+    global city_ListBox
+    city_search_term = cityList[city_ListBox.curselection()[0]]
 
-    # === 검색어[city_search_term] 기준으로 경기도 버스 정류소 현황 데이터 load ===
+    # === 선택하지 않았을 때, 경고 메시지 ===
+
+
+    # === 대기 멘트 ===
+    city_frame = Frame(window)
+
+
+    Label(city_frame, text="======================================================================", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=500, width=450, height=60)
+    Label(city_frame, text="[ SYSTEM ] :  검색어 - "+ city_search_term, font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=550, width=400, height=60)
+    Label(city_frame, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=620, width=400, height=60)
+
+    # === 유도 멘트 제공 ===
+    Label(city_frame, text="[ SYSTEM ] :  검색할 정류장을 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
+        x=510, y=90, width=450, height=60)
+
     # === 검색어[city_search_term] 기준으로 경기도 버스 정류소 현황 데이터 load ===
     url_busStation = 'https://openapi.gg.go.kr/BusStation?'
     params_busStation = {'KEY': server.gggokrKey, 'pSize': '1000', 'pIndex': '1', 'SIGUN_NM' : city_search_term}
@@ -63,26 +97,35 @@ def search_city():
 
     # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
     # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-    city_scrollbar = Scrollbar(window)
-    city_scrollbar.place(x=560, y=250, width=20, height=500)
+    city_searchListBox = Listbox(city_frame, font=standardFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
+    city_searchListBox.place(x=510, y=150, width=440, height=500)
 
-    city_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=city_scrollbar.set)
-    city_searchListBox.place(x=25, y=250, width=535, height=500)
+    city_yscrollbar = Scrollbar(city_frame)
+    city_yscrollbar.place(x=920, y=162, width=20, height=478)
 
-    city_scrollbar.config(command=city_searchListBox.yview)
+    city_xscrollbar = Scrollbar(city_frame, orient='horizontal')
+    city_xscrollbar.place(x=522, y=620, width=399, height=20)
+
+    city_searchListBox.config(yscrollcommand=city_yscrollbar.set, xscrollcommand=city_xscrollbar)
+    city_yscrollbar.config(command=city_searchListBox.yview)
+    city_xscrollbar.config(command=city_searchListBox.xview)
 
     # === 리스트 박스[city_SearchListBox] 원소 채우기 ===
     for i, item in enumerate(this_city_stations, start=1):
         str = city_search_term + " " + item.findtext("STATION_NM_INFO")
         city_searchListBox.insert(i + 1, str)
 
-    # === 정류장 상세 정보 출력을 위한 함수로 이동하기 위함 ===
-    # === 리스트 박스 내의 원소 클릭 setBusStation()으로 이동 ===
-
     # === 버튼 누르면 정류장 상세 정보 출력을 위해 준비하는 함수로 이동 [readyto_search_BusStation_fromCity]===
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-           cursor="hand2", overrelief="sunken", command=readyto_search_busStation_fromCity).place(x=250, y=750)
+    Button(city_frame, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=search_city).place(x=190, y=450, width=150, height=60)
+    Button(city_frame, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=readyto_search_busStation_fromCity).place(x=800, y=650, width=150, height=60)
+    city_frame.pack()
+    # === 다시 [city_ListBox] 눌렀다면, 대기 멘트들과 정류장 목록 삭제할 수 있도록 !!!
+    city_ListBox.bind('<<ListboxSelect>>', resetTo_searchCity)
 
+def resetTo_searchCity(event):
+    pass
 def readyto_search_busStation_fromCity():
     global selectedCity, city_search_term, city_searchListBox, busStation_search_term
     selectedCity = city_search_term
@@ -125,7 +168,6 @@ def open_busStation_window():
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
     Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
                             cursor="hand2", overrelief="sunken", command=readyto_search_busStation).place(x=530, y=163, width=50, height=40)
-
 
 def readyto_search_busStation():
     global selectedCity, cityList_searchListBox, busStation_search_text, busStation_search_term
@@ -350,47 +392,42 @@ def open_past_window():
 def clear_window():
     for widget in window.winfo_children():
         widget.destroy()
-
+    Label(window, image=server.backGroundImage).place(x=0, y=0)
+    Button(window, image=server.homeIcon, relief="flat",
+           cursor="hand2", command=InitScreen).place(x=900, y=12, width=40, height=40)
 # === functions ===
 def InitScreen():  # 메인 GUI 창을 시작하는 함수
-    global buttonSize
-    buttonSize = 200
-
+    clear_window()
     # === frame arrangement ===
     # 분류 제목 레이블 부분
-    global CityLabel, StationLabel, LineNumberLabel
-    CityLabel = Label(window, text="시/군", font=server.fontLabel, bg="white", image=server.labelImage, compound='center')
-    StationLabel = Label(window, text="정류소명", font=server.fontLabel, bg="white", image=server.labelImage, compound='center')
-    LineNumberLabel = Label(window, text="노선명", font=server.fontLabel, bg="white", image=server.labelImage, compound='center')
+    mainLabel = Label(window, text="[ 메인 메뉴 ]", font=TempFont, compound='center', bg='#000fa3', fg='white')
+    titleLabel = Label(window, text="# 뻐-스 (bBus)", font=mainFont, compound='center', bg='#000fa3', fg='white')
+    CityLabel = Label(window, text="시 / 군", font=TempFont, compound='center', bg='#000fa3', fg='white')
+    StationLabel = Label(window, text="정류소명", font=TempFont, compound='center', bg='#000fa3', fg='white')
+    LineNumberLabel = Label(window, text="노선명", font=TempFont, compound='center', bg='#000fa3', fg='white')
 
     # 줄 맞추기 정보
-    CityLabel.place(x=0, y=470, width=buttonSize, height=buttonSize)
-    StationLabel.place(x=200, y=470, width=buttonSize, height=buttonSize)
-    LineNumberLabel.place(x=400, y=470, width=buttonSize, height=buttonSize)
+    mainLabel.place(x=300, y=10, width=400, height=40)
+    titleLabel.place(x=100, y=650, width=500, height=60)
+    CityLabel.place(x=700, y=150, width=200, height=40)
+    StationLabel.place(x=700, y=340, width=200, height=40)
+    LineNumberLabel.place(x=700, y=530, width=200, height=40)
 
     # 로고 버튼 - git 주소 연결
-    global LogoLabel
-    LogoLable = Button(window, image=server.logoImage, bg="white", command=onLogo, relief="flat",
-                       activebackground="dark grey", cursor="hand2", overrelief="groove")
-    LogoLable.place(x=10, y=10, width=580, height=500)
-
+    Button(window, image=server.logo, bg="white", command=onLogo, relief="flat",
+                            cursor="hand2", overrelief="groove").place(x=100, y=150, width=500, height=500)
     # 시/군 검색 버튼 - 시/군 검색 페이지로
-    global LocalSearchButton
-    LocalSearchButton = Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-                            cursor="hand2", overrelief="sunken", command=open_city_window)
-    LocalSearchButton.place(x=0, y=600, width=buttonSize, height=buttonSize)
-
+    Button(window, image=server.searchImage, bg="white", activebackground="dark grey", relief="flat",
+                            cursor="hand2", command=open_city_window).place(x=700, y=190, width=200, height=80)
     # 정류소 명 검색 버튼
-    global StationSearchButton
-    StationSearchButton = Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-                               cursor="hand2", overrelief="sunken", command=open_busStation_window, font=TempFont)
-    StationSearchButton.place(x=200, y=600, width=buttonSize, height=buttonSize)
-
+    Button(window, image=server.searchImage, bg="white", activebackground="dark grey", relief="flat",
+                            cursor="hand2", command=open_busStation_window, font=TempFont).place(x=700, y=380, width=200, height=80)
     # 노선 명 검색 버튼
-    global LineSearchButton
-    LineSearchButton = Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-                               cursor="hand2", overrelief="sunken", command=open_bus_window)
-    LineSearchButton.place(x=400, y=600, width=buttonSize, height=buttonSize)
+    Button(window, image=server.searchImage, bg="white", activebackground="dark grey", relief="flat",
+                            cursor="hand2", command=open_bus_window).place(x=700, y=570, width=200, height=80)
+
+
+
 
 
 

@@ -8,23 +8,44 @@ server.py
 # === inport ===
 from tkinter import *
 from tkinter import font
+from io import BytesIO
+import urllib
+import urllib.request
+from PIL import Image, ImageTk
+
 
 # === main window ===
 window = Tk()
 window.title("뻐스 - BBus")
-window.geometry("600x800+450+200")
+window.geometry("1000x800+450+200")
 window.resizable(False, False)
-window.configure(bg='lightgray')
+
+backGroundImage = PhotoImage(file='image/backGround.png')
+
+Label(window,image=backGroundImage).place(x=0,y=0)
 
 # === load image ===
-searchImage = PhotoImage(file='image/little_search.png')  # search image
+url = "https://postfiles.pstatic.net/MjAyMzA1MjZfNzMg/MDAxNjg1MTA5MDYzMzEx.-M_kjwI2_MC0eiW305AxOgtcpjLHzAQFxlgSdI_L8lwg.pUbE2rR2nY3rQAR5DQ-APW11L0DMizGdcDnA3X2rRBog.GIF.elfgh29/main_image.gif?type=w773"
+with urllib.request.urlopen(url) as u:
+    raw_data = u.read()
+
+im = Image.open(BytesIO(raw_data))
+
+searchImage = PhotoImage(file='image/search_retro.png')  # search image
+smallSearchImage = PhotoImage(file='image/smallSearch_retro.png')  # search
+
 filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
 emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
 mapImage = PhotoImage(file='image/map_icon2.png')  # map image
 emptymarkImage = PhotoImage(file='image/white_bookmark.png')  # mark image
 markImage = PhotoImage(file='image/bookmark.png')  # mark image
 telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
-logoImage = PhotoImage(file='image/뻐스.png')  # logo image
+
+logo = PhotoImage(file='image/뻐스.png')  # telegram image
+logoImage = ImageTk.PhotoImage(im)  # logo image
+
+homeImage = PhotoImage(file='image/home.png')
+homeIcon = PhotoImage(file='image/home_icon.png')
 graphImage = PhotoImage(file='image/trend.png')  # graph image
 noImage = PhotoImage(file='image/close.png')  # no image
 labelImage = PhotoImage(file='image/label.png')  # label image
@@ -48,7 +69,7 @@ MarkDict = dict()  # 북마크 dict {정류소명:정류소 정보}
 latitude = 0.0  # 위도
 longitude = 0.0  # 경도
 
-city_list = ['선택안함', '가평군', '고양시', '과천시', '광명시', '광주시', '구리시', '군포시', \
+city_list = ['가평군', '고양시', '과천시', '광명시', '광주시', '구리시', '군포시', \
              '김포시', '남양주시', '동두천시', '부천시', '성남시', '수원시', '시흥시', '안산시', '안성시', \
              '안양시', '양주시', '양평군', '여주시', '연천군', '오산시', '용인시', '의왕시', '의정부시', \
              '이천시', '파주시', '평택시', '포천시', '하남시', '화성시']
