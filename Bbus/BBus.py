@@ -22,7 +22,7 @@ from server import window
 # ==== 필요한 전역 변수 선언 ====
 # 각 사이트 인증키
 cityList = server.city_list
-TempFont = font.Font(window, size=20, weight='bold', family='온글잎 원슝')
+TempFont = font.Font(window, size=20, weight='bold', family='DungGeunMo')
 
 # ====시/군 버튼 push====
 # 시/군 검색 윈도우 open

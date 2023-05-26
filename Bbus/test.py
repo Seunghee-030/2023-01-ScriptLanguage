@@ -1,14 +1,16 @@
-import tkinter as tk
+from tkinter import Tk, Label
+from PIL import Image, ImageTk
 
-def get_selected_index():
-    index = citySearchListBox.curselection()
-    print(index)
+# Tkinter 윈도우 생성
+window = Tk()
 
-root = tk.Tk()
-citySearchListBox = tk.Listbox(root)
-citySearchListBox.pack()
+# 이미지 로드
+image = Image.open("image/logo.png")
+photo = ImageTk.PhotoImage(image)
 
-button = tk.Button(root, text="Get Selected Index", command=get_selected_index)
-button.pack()
+# 레이블 위젯 생성 및 이미지 설정
+label = Label(window, image=photo)
+label.pack()
 
-root.mainloop()
+# 윈도우 실행
+window.mainloop()
