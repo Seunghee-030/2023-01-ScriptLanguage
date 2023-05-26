@@ -22,11 +22,15 @@ from server import window
 # ==== 필요한 전역 변수 선언 ====
 # 각 사이트 인증키
 cityList = server.city_list
+<<<<<<< HEAD
 TempFont = font.Font(window, size=25, weight='bold', family='DungGeunMo')
 smallFont = font.Font(window, size=10, weight='bold', family='DungGeunMo')
 standardFont = font.Font(window, size=15,  family='DungGeunMo')
 mainFont = font.Font(window, size=50, weight='bold', family='DungGeunMo', slant='italic')
 listFont = font.Font(window, size=25, family='DungGeunMo')
+=======
+TempFont = font.Font(window, size=20, weight='bold', family='DungGeunMo')
+>>>>>>> a013b8959f63b75b398b1c0232235e061bb40b77
 
 # ====시/군 버튼 push====
 # 시/군 검색 윈도우 open
