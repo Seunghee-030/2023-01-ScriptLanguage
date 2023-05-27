@@ -37,48 +37,47 @@ def open_city_window():
     clear_window()
     window.title("시/군 검색 기능")
 
+    # === 윈도우의 기본 디자인 ===
     Label(window, text="[ 시 / 군 검색 기능 ]", font=TempFont, compound='center', bg='#000fa3', fg='white').place(x=300, y=10, width=400, height=40)
-    Label(window, text="[ 시 / 군 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black',relief='raised').place(x=60, y=757, width=100, height=40)
+    Button(window, text="[ 시 / 군 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black',relief='raised', command=open_city_window).place(x=60, y=757, width=100, height=40)
 
     # === 유도 멘트 제공 ===
     Label(window, text="[ SYSTEM ] :  검색할 도시를 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
         x=40, y=90, width=450, height=60)
 
-    # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
-    # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-    global city_ListBox
-    city_ListBox = Listbox(window, font=listFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
-    city_ListBox.place(x=50, y=150, width=440, height=300)
+    # === [cityList]의 데이터를 이용해 [city_selectListBox]와 그와 연결되는 [city_SLB_scrollbar] 생성 ===
+    global city_selectListBox
+    city_selectListBox = Listbox(window, font=listFont, activestyle='underline', bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
+    city_selectListBox.place(x=50, y=150, width=440, height=300)
 
-    city_scrollbar = Scrollbar(window)
-    city_scrollbar.place(x=460, y=162, width=20, height=276)
+    city_SLB_scrollbar = Scrollbar(window)
+    city_SLB_scrollbar.place(x=460, y=162, width=20, height=276)
 
-    city_ListBox.config(yscrollcommand=city_scrollbar.set)
-    city_scrollbar.config(command=city_ListBox.yview)
+    city_selectListBox.config(yscrollcommand=city_SLB_scrollbar.set)
+    city_SLB_scrollbar.config(command=city_selectListBox.yview)
 
-    # === 리스트 박스[city_ListBox] 원소 채우기 ===
+    # === 리스트 박스[city_selectListBox] 원소 채우기 ===
     for i, item in enumerate(cityList, start=1):
-        city_ListBox.insert(i + 1, item)
+        city_selectListBox.insert(i + 1, item)
 
-    # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
-
+    # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음 ===
+        # === [search_city] 함수로 이동 ===
     Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
-                            cursor="hand2", command=search_city).place(x=190, y=450, width=150, height=60)
+           cursor="hand2", command=search_station_with_citySLB).place(x=190, y=450, width=150, height=60)
 
-# 시/군 검색어 입력 및 리스트 생성
-def search_city():
-    # === 검색어 입력 ===
-    global city_ListBox
-    city_search_term = cityList[city_ListBox.curselection()[0]]
+# search_station_with_selectCity() : 시/군 검색어 선택 및 검색어 기준으로 정류장 리스트 생성하는 함수
+def search_station_with_citySLB():
+    # === 검색어 [citySLB]에서 받아오기 ===
+    global city_selectListBox, station_selectListBox
+    server.cityInfo = cityList[city_selectListBox.curselection()[0]]
 
-    # === 선택하지 않았을 때, 경고 메시지 ===
+    # === 선택하지 않았을 때, 경고 메시지 - 만들어야 함 !!! ===
 
 
-    # === 대기 멘트 ===
-
+    # === 추가 설명 Label ===
     Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=500, width=450, height=60)
-    Label(window, text="[ SYSTEM ] :  검색어 - "+ city_search_term, font=standardFont, bg='#000fa3',
+    Label(window, text="[ SYSTEM ] :  검색어 - "+ server.cityInfo, font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=550, width=400, height=60)
     Label(window, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=620, width=400, height=60)
@@ -87,56 +86,57 @@ def search_city():
     Label(window, text="[ SYSTEM ] :  검색할 정류장을 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
         x=510, y=90, width=450, height=60)
 
-    # === 검색어[city_search_term] 기준으로 경기도 버스 정류소 현황 데이터 load ===
+    # === 검색어[server.cityInfo] 기준으로 경기도 버스 정류소 현황 데이터 load ===
     url_busStation = 'https://openapi.gg.go.kr/BusStation?'
-    params_busStation = {'KEY': server.gggokrKey, 'pSize': '1000', 'pIndex': '1', 'SIGUN_NM' : city_search_term}
+    params_busStation = {'KEY': server.gggokrKey, 'pSize': '1000', 'pIndex': '1', 'SIGUN_NM' : server.cityInfo}
 
     response = requests.get(url_busStation, params=params_busStation)
     root = ET.fromstring(response.text)
     this_city_stations = root.findall("row")
 
-    # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
-    # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-    city_searchListBox = Listbox(window, font=standardFont, activestyle='underline',bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
-    city_searchListBox.place(x=510, y=150, width=440, height=500)
+    # === [server.cityInfo] 기준으로 버스 정류소 리스트 생성 ===
+    # === 스크롤바[stationSLB_yscrollbar, stationSLB_xscrollbar] 및 리스트 박스[station_selectListBox] 위치 지정 ===
+    station_selectListBox = Listbox(window, font=standardFont, activestyle='underline', bd=10, selectborderwidth=3, selectbackground='#000fa3', bg='#b8b8b8')
+    station_selectListBox.place(x=510, y=150, width=440, height=500)
 
-    city_yscrollbar = Scrollbar(window)
-    city_yscrollbar.place(x=920, y=162, width=20, height=478)
+    stationSLB_yscrollbar = Scrollbar(window)
+    stationSLB_yscrollbar.place(x=920, y=162, width=20, height=478)
 
-    city_xscrollbar = Scrollbar(window, orient='horizontal')
-    city_xscrollbar.place(x=522, y=620, width=399, height=20)
+    stationSLB_xscrollbar = Scrollbar(window, orient='horizontal')
+    stationSLB_xscrollbar.place(x=522, y=620, width=399, height=20)
 
-    city_searchListBox.config(yscrollcommand=city_yscrollbar.set, xscrollcommand=city_xscrollbar)
-    city_yscrollbar.config(command=city_searchListBox.yview)
-    city_xscrollbar.config(command=city_searchListBox.xview)
+    station_selectListBox.config(yscrollcommand=stationSLB_yscrollbar.set, xscrollcommand=stationSLB_xscrollbar)
+    stationSLB_yscrollbar.config(command=station_selectListBox.yview)
+    stationSLB_xscrollbar.config(command=station_selectListBox.xview)
 
-    # === 리스트 박스[city_SearchListBox] 원소 채우기 ===
+    # === 리스트 박스[station_selectListBox] 원소 채우기 ===
     for i, item in enumerate(this_city_stations, start=1):
-        str = city_search_term + " " + item.findtext("STATION_NM_INFO")
-        city_searchListBox.insert(i + 1, str)
+        str = server.cityInfo + " " + item.findtext("STATION_NM_INFO")
+        station_selectListBox.insert(i + 1, str)
 
-    # === 버튼 누르면 정류장 상세 정보 출력을 위해 준비하는 함수로 이동 [readyto_search_BusStation_fromCity]===
+    # === 해당 함수 다시 시작하는 버튼, 작업관리자 줄에 존재 ===
     Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
-           cursor="hand2", command=search_city).place(x=190, y=450, width=150, height=60)
-    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
-           cursor="hand2", command=readyto_search_busStation_fromCity).place(x=800, y=650, width=150, height=60)
+           cursor="hand2", command=search_station_with_citySLB).place(x=190, y=450, width=150, height=60)
 
-    # === 다시 [city_ListBox] 눌렀다면, 대기 멘트들과 정류장 목록 삭제할 수 있도록 !!!
-    city_ListBox.bind('<<ListboxSelect>>', resetTo_searchCity)
+    # === 버튼 누르면 정류장의 상세 정보 출력을 위해 준비하는 함수로 이동 [readyto_search_BusStation_fromCity]===
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=readyto_search_busStationInfo_fromCity).place(x=800, y=650, width=150, height=60)
+
+    # === 다시 [city_ListBox] 눌렀다면, 대기 멘트들과 정류장 목록 삭제할 수 있도록 !!! - 만들어야 함 ===
+    city_selectListBox.bind('<<ListboxSelect>>', resetTo_searchCity)
 
 def resetTo_searchCity(event):
     pass
 
-def readyto_search_busStation_fromCity():
-    global selectedCity, city_search_term, city_searchListBox, busStation_search_term
-    selectedCity = city_search_term
-    busStation_search_term = city_searchListBox.get(city_searchListBox.curselection())[4:]
+def readyto_search_busStationInfo_fromCity():
+    global station_selectListBox
+    server.stationInfo = station_selectListBox.get(station_selectListBox.curselection())[4:]
 
     # 윈도우 정리하기
     clear_window()
-    Label(window, font=server.fontList, text=busStation_search_term + " 정류장에 대한 정보입니다.").place(x=20, y=85, width=560, height=40)
+    Label(window, font=server.fontList, text=server.stationInfo + " 정류장에 대한 정보입니다.").place(x=20, y=85, width=560, height=40)
 
-    search_BusStation()
+    search_busStationInfo()
 
 # ====정류장 버튼 push====
 # 정류장 검색 윈도우 open
@@ -145,66 +145,81 @@ def open_busStation_window():
     clear_window()
     window.title("정류소 검색 기능")
 
+    # === 윈도우의 기본 디자인 ===
+    Label(window, text="[ 정류소 검색 기능 ]", font=TempFont, compound='center', bg='#000fa3', fg='white').place(x=300, y=10, width=400, height=40)
+    Button(window, text="[ 정류소 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black', relief='raised', command=open_busStation_window).place(x=60, y=757, width=100, height=40)
+
+    # === 유도 멘트 제공 ===
+    Label(window, text="[ SYSTEM ] :  검색할 도시를 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(x=40, y=90, width=450, height=60)
+
+    # === [cityList]의 데이터를 이용해 [city_selectListBox]와 그와 연결되는 [city_SLB_scrollbar] 생성 ===
+    global city_selectListBox
+    city_selectListBox = Listbox(window, font=listFont, activestyle='underline', bd=10, selectborderwidth=3,
+                                 selectbackground='#000fa3', bg='#b8b8b8')
+    city_selectListBox.place(x=50, y=150, width=440, height=300)
+
+    city_SLB_scrollbar = Scrollbar(window)
+    city_SLB_scrollbar.place(x=460, y=162, width=20, height=276)
+
+    city_selectListBox.config(yscrollcommand=city_SLB_scrollbar.set)
+    city_SLB_scrollbar.config(command=city_selectListBox.yview)
+
+    # === 리스트 박스[city_selectListBox] 원소 채우기 ===
+    for i, item in enumerate(cityList, start=1):
+        city_selectListBox.insert(i + 1, item)
+
+    # === 추가 설명 Label ===
+    Label(window, text="[ SYSTEM ] :  정류장을 입력하세요 _ ", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=450, width=400, height=60)
+    Label(window, text="[  USER  ] :", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=500, width=150, height=40)
+
     # === 시/군 검색어 입력 창 ===
-    global busStation_search_text, cityList_searchListBox
-    busStation_search_text = Text(window, height=1, width=15, font=TempFont)
-    busStation_search_text.place(x=305, y=165)
+    global busStation_search_text
+    busStation_search_text = Text(window, height=1, width=30, font=standardFont, bg='#000f87', fg='white', relief='flat')
+    busStation_search_text.place(x=180, y=508)
 
-    # === [도시명] 기준으로 리스트 생성 ===
-    # === 스크롤바 및 리스트 박스 위치 지정 ===
-    cityList_scrollbar = Scrollbar(window)
-    cityList_scrollbar.place(x=280, y=70, width=20, height=150)
 
-    cityList_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=cityList_scrollbar.set)
-    cityList_searchListBox.place(x=25, y=70, width=255, height=150)
-
-    cityList_scrollbar.config(command=cityList_searchListBox.yview)
-
-    # === 리스트 원소 채우기 ===
-    for i, s in enumerate(cityList):
-        cityList_searchListBox.insert(i, s)
-
-    # === 검색어 작성 유도 멘트 ===
-    Label(window, font=server.fontList, text="정류장을 입력하세요.").place(x=305, y=85, width=275, height=40)
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-                            cursor="hand2", overrelief="sunken", command=readyto_search_busStation).place(x=530, y=163, width=50, height=40)
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=readyto_search_busStation).place(x=350, y=530, width=150, height=60)
 
 def readyto_search_busStation():
-    global selectedCity, cityList_searchListBox, busStation_search_text, busStation_search_term
+    global city_selectListBox, busStation_search_text
+    server.stationInfo = busStation_search_text.get("1.0", END).strip()
+    server.cityInfo = cityList[city_selectListBox.curselection()[0]]
 
-    selectedCity = cityList_searchListBox.get(cityList_searchListBox.curselection())
-    busStation_search_term = busStation_search_text.get("1.0", END).strip()
+    # === 추가 설명 Label ===
+    Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=580, width=450, height=60)
+    Label(window, text="[ SYSTEM ] : " + server.stationInfo +" 정류장 버스 목록을\n 불러오는 중입니다...", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w').place(x=40, y=650, width=400, height=60)
+    search_busStationInfo()
 
-    print(selectedCity)
-    search_BusStation()
-
-# 정류장 검색어 입력 및 리스트 생성
-def search_BusStation():
+# search_busStationInfo() : 정류장 검색어 기준으로 정류장에 도착하는 버스 목록 생성하는 함수
+def search_busStationInfo():
     # === 검색어 입력 ===
-    global busStation_search_term
-    print("검색어:", busStation_search_term)
+    print("검색어:", server.stationInfo)
 
-    # === 검색어[도시명] 기준으로 경기도 버스 정류소 현황 데이터 load ===
-    global selectedCity
+    # === 검색어[server.cityInfo] 기준으로 경기도 버스 정류소 현황 데이터 load ===
     url_busStation = 'https://openapi.gg.go.kr/BusStation?'
-    params_busStation = {'KEY': server.gggokrKey, 'pSize': '1000', 'pIndex': '1', 'SIGUN_NM': selectedCity}
+    params_busStation = {'KEY': server.gggokrKey, 'pSize': '1000', 'pIndex': '1', 'SIGUN_NM': server.cityInfo}
 
     response = requests.get(url_busStation, params=params_busStation)
     root = ET.fromstring(response.text)
     items = root.findall("row")
 
-    # === [도시명] 기준으로 받아온 데이터와 [정류장명]이 같은 경우의 [정류장ID] 받아오기 ===
+    # === [server.cityInfo] 기준으로 받아온 데이터와 [정류장명]이 같은 경우의 [정류장ID] 및 [위도/경도] 받아오기 ===
     station_id = ""
     for i, item in enumerate(items, start=1):
-        if busStation_search_term == item.findtext("STATION_NM_INFO"):
+        if server.stationInfo == item.findtext("STATION_NM_INFO"):
             station_id = item.findtext("STATION_ID")
             server.latitude = float(item.find("WGS84_LAT").text)
             server.longitude = float(item.find("WGS84_LOGT").text)
-            server.station_name = busStation_search_term
+            server.station_name = server.stationInfo
 
     global busArrival_items
-    # === 검색어[정류장ID] 기준으로 경기도 버스 도착 정보 조회 데이터 load  ===
+    # === 검색어[station_id] 기준으로 경기도 버스 도착 정보 조회 데이터 load  ===
     url_busArrival = 'http://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?'
     params_busArrival = {'serviceKey': server.datagokrKey, 'stationId': station_id}
 
@@ -212,100 +227,123 @@ def search_BusStation():
     busArrival_root = ET.fromstring(busArrival_response.text)
     busArrival_items = busArrival_root.findall(".//busArrivalList")
 
-    # === [정류장ID] 기준으로 리스트 생성 ===
-    # === 스크롤바 및 리스트 박스 위치 지정 ===
-    busStation_scrollbar = Scrollbar(window)
-    busStation_scrollbar.place(x=280, y=250, width=20, height=200)
+    # === [station_id] 기준으로 해당 정류장에 도착하는 리스트 생성 ===
+    # === 스크롤바[sbusSLB_scrollbar] 및 리스트 박스[busStation_searchListBox] 위치 지정 ===
 
-    busStation_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=busStation_scrollbar.set)
-    busStation_searchListBox.place(x=25, y=250, width=255, height=200)
+    # === [server.cityInfo] 기준으로 버스 정류소 리스트 생성 ===
+    # === 스크롤바[stationSLB_yscrollbar, stationSLB_xscrollbar] 및 리스트 박스[station_selectListBox] 위치 지정 ===
+    bus_selectListBox = Listbox(window, font=listFont, activestyle='underline', bd=10, selectborderwidth=3,
+                                    selectbackground='#000fa3', bg='#b8b8b8')
+    bus_selectListBox.place(x=510, y=150, width=440, height=300)
 
-    busStation_scrollbar.config(command=busStation_searchListBox.yview)
+    busSLB_yscrollbar = Scrollbar(window)
+    busSLB_yscrollbar.place(x=920, y=162, width=20, height=278)
 
+    busSLB_xscrollbar = Scrollbar(window, orient='horizontal')
+    busSLB_xscrollbar.place(x=522, y=420, width=399, height=20)
 
+    bus_selectListBox.config(yscrollcommand=busSLB_yscrollbar.set, xscrollcommand=busSLB_xscrollbar)
+    busSLB_yscrollbar.config(command=bus_selectListBox.yview)
+    busSLB_xscrollbar.config(command=bus_selectListBox.xview)
 
-    busStation_searchListBox.bind('<<ListboxSelect>>', setBus)
+    # === [busStation_searchListBox]에서 목록 선택 시, 이벤트 발생 ===
+    bus_selectListBox.bind('<<ListboxSelect>>', setBus)
+
     # === 검색어 [루트ID] 기준으로 경기도 버스 노선 조회 데이터 load ===
-    url_busRoute= 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteInfoItem'
+    url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteInfoItem'
 
+    # === 해당 [station_id]를 경유하는 [routeID]의 노선 번호 및 여러 데이터 [busStation_searchListBox]에 저장하기 ===
     global busRoutes_items
-    busRoutes_items = [busStation_search_term]
-    # === 해당 [정류장ID]를 경유하는 [routeID]의 노선 번호 및 여러 데이터 출력하기 ===
+    busRoutes_items = [server.stationInfo]
     for i, item in enumerate(busArrival_items, start=1):
-        print(item.findtext("routeId"))
         params_busRoute = {'serviceKey': server.datagokrKey, 'routeId': item.findtext("routeId")}
+
         busRoute_response = requests.get(url_busRoute, params=params_busRoute)
         busRoute_root = ET.fromstring(busRoute_response.text)
         busRoutes_items.append(busRoute_root.findall(".//busRouteInfoItem"))
+
         str = busRoutes_items[i][0].findtext("routeName") + "번 버스"
-        busStation_searchListBox.insert(i, str)
+        bus_selectListBox.insert(i, str)
+
 # 도착 정보 출력
-def show_BusStationInfo() :
-    global index, busRoutes_items, busArrival_items
-    str = busRoutes_items[index + 1][0].findtext("routeName") + "번 버스\n"
-    if busArrival_items[index].findtext("predictTime1") != '':
-        str += busArrival_items[index].findtext("predictTime1") + "분 후 도착 예정\n"
-    if busArrival_items[index].findtext("predictTime2") != '':
-        str += busArrival_items[index].findtext("predictTime2") + "분 후 도착 예정"
-    arrivalLabel = Label(window, font=TempFont, text=str, wraplength=400)
-    arrivalLabel.place(x=305, y=250, width=275, height=200)
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-           cursor="hand2", overrelief="sunken", command=readyto_search_busRoute_fromStation).place(x=520, y=400, width=50, height=40)
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey",
-                            cursor="hand2", overrelief="sunken", command=map.onMapPopup).place(x=525, y=57, width=40, height=40)
+def show_busStationInfo() :
+    # === busRoute_items에서 해당 버스의 실시간 도착 정보 제공 ===
+    global busRoutes_items, busArrival_items
+    str = busRoutes_items[server.busInfo + 1][0].findtext("routeName") + "번 버스\n\n"
+
+    if busArrival_items[server.busInfo].findtext("predictTime1") != '':
+        str += busArrival_items[server.busInfo].findtext("predictTime1") + "분 후 도착 예정\n"
+
+    if busArrival_items[server.busInfo].findtext("predictTime2") != '':
+        str += busArrival_items[server.busInfo].findtext("predictTime2") + "분 후 도착 예정"
+
+    Button(window, font=listFont, image=server.busInfoImage, wraplength=400, command=readyto_search_busRoute_fromStation).place(x=580, y=480, width=300, height=205)
+    Label(window, font=standardFont, text=str, wraplength=400, bg='#b8b8b8').place(x=605, y=505, width=250, height=155)
+
+    # === 지도 아이콘 선택 ===
+    Button(window, image=server.mapImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", overrelief="flat", command=map.onMapPopup).place(x=850, y=100, width=100, height=40)
 
 # === 이벤트 발생 함수 ===
 def setBus(event):                      # 정류장 선택 > 도시 선택 > 정류장명 작성 > 해당 정류장의 버스 목록 중 하나 선택 시 실행.
     tmp = event.widget.curselection()
     if tmp:
-        global index
-        index = event.widget.curselection()[0]
-        show_BusStationInfo()
+        server.busInfo = event.widget.curselection()[0]
+        show_busStationInfo()
 
 
-# ====버스 버튼 push - 승희====
+# ====버스 버튼 push ====
 # 버스 검색 윈도우 open
 def open_bus_window() :
     # === window 정리 ===
     clear_window()
     window.title("버스 노선 검색 기능")
 
-    # === 버스 노선 검색어 입력 창 ===
+    # === 윈도우의 기본 디자인 ===
+    Label(window, text="[ 버스 노선 검색 기능 ]", font=TempFont, compound='center', bg='#000fa3', fg='white').place(x=300, y=10, width=400, height=40)
+    Button(window, text="[ 버스 노선 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black', relief='raised', command=open_bus_window).place(x=60, y=757, width=100, height=40)
+
+    # === 유도 멘트 제공 ===
+    Label(window, text="[ SYSTEM ] :  검색할 버스 노선을 입력하세요 _", font=standardFont, bg='#000fa3', fg='white', anchor='w').place(x=40, y=90, width=450, height=60)
+
+    # === 추가 설명 Label ===
+    Label(window, text="[  USER  ] :", font=standardFont, bg='#000fa3', fg='white', anchor='w').place(x=40, y=150, width=150, height=40)
+
+    # === 시/군 검색어 입력 창 ===
     global busRoute_search_text
+    busRoute_search_text = Text(window, height=1, width=30, font=standardFont, bg='#000f87', fg='white', relief='flat')
+    busRoute_search_text.place(x=180, y=158)
 
-    busRoute_search_text = Text(window, height=1, width=30, font=TempFont)  # 세로 길이(height)를 조절
-    busRoute_search_text.pack(pady=80)
-
-    Label(window, font=server.fontList, text="버스 노선 명을 입력하세요.").place(x=90, y=35, width=400, height=40)
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
-    Button(window, image=server.searchImage, bg="white", activebackground="dark grey", cursor="hand2", overrelief="sunken", command=readyto_search_busRoute).place(x=525, y=77, width=40, height=40)
+    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=readyto_search_busRoute).place(x=350, y=190, width=150, height=60)
 
 def readyto_search_busRoute():
-    global busRoute_search_text, busRoute_search_term, passLoad
-
-    busRoute_search_term = busRoute_search_text.get("1.0", END).strip()
+    global busRoute_search_text, passLoad
+    server.busInfo = busRoute_search_text.get("1.0", END).strip()
     passLoad = 0
-
     search_bus()
 def readyto_search_busRoute_fromStation():
-    global busRoute_search_text, busRoute_search_term, index, busRoutes_items, passLoad
-
-    busRoute_search_term = busRoutes_items[index + 1][0].findtext("routeId")
-    print(busRoute_search_term, type(busRoute_search_term))
+    global busRoute_search_text, busRoutes_items, passLoad
+    server.busInfo = busRoutes_items[server.busInfo + 1][0].findtext("routeId")
     passLoad = 1
     search_bus()
 
 # 버스 검색어 입력 및 리스트 생성
 def search_bus():
-    global busRoute_search_term, busRoute_items, passLoad
+    global busRoute_items, passLoad
     busRoute_items = []
-    print("검색어:", busRoute_search_term)
     if passLoad == 0:
+        # === 추가 설명 Label ===
+        Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=240, width=450, height=60)
+        Label(window, text="[ SYSTEM ] :  검색어 - " + server.busInfo, font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=290, width=400, height=60)
         # === [routeId]를 기준 ===
         url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteList'
         params_busRoute = {
             'serviceKey': 'xmFs5IrPwwEJmSe8Pu6PcPO8P6+iVF5mfCz/yTZ3WPmUjST6KEDtbhXDh9hAil7MP4Mhgli8CiW91OzNPR5N+A==', \
-            'keyword': busRoute_search_term}
+            'keyword': server.busInfo}
 
         busRoute_response = requests.get(url_busRoute, params=params_busRoute)
         busRoute_root = ET.fromstring(busRoute_response.text)
@@ -313,25 +351,29 @@ def search_bus():
 
         # === [city_search_term] 기준으로 버스 정류소 리스트 생성 ===
         # === 스크롤바[city_Scrollbar] 및 리스트 박스[city_SearchListBox] 위치 지정 ===
-        busRoute_scrollbar = Scrollbar(window)
-        busRoute_scrollbar.place(x=560, y=150, width=20, height=250)
 
-        busRoute_searchListBox = Listbox(window, font=TempFont, activestyle='dotbox', relief='ridge', yscrollcommand=busRoute_scrollbar.set)
-        busRoute_searchListBox.place(x=25, y=150, width=535, height=250)
+        # === [cityList]의 데이터를 이용해 [city_selectListBox]와 그와 연결되는 [city_SLB_scrollbar] 생성 ===
+        busRoute_selectListBox = Listbox(window, font=standardFont, activestyle='underline', bd=10, selectborderwidth=3,
+                                     selectbackground='#000fa3', bg='#b8b8b8')
+        busRoute_selectListBox.place(x=50, y=350, width=440, height=380)
 
-        busRoute_scrollbar.config(command=busRoute_searchListBox.yview)
+        busRoute_SLB_scrollbar = Scrollbar(window)
+        busRoute_SLB_scrollbar.place(x=460, y=362, width=20, height=356)
+
+        busRoute_selectListBox.config(yscrollcommand=busRoute_SLB_scrollbar.set)
+        busRoute_SLB_scrollbar.config(command=busRoute_selectListBox.yview)
 
         # === 리스트 박스[city_SearchListBox] 원소 채우기 ===
         for i, item in enumerate(busRoute_items, start=1):
             str = item.findtext("routeName") + " | " + item.findtext("regionName") + " | " +item.findtext("routeTypeName")
-            busRoute_searchListBox.insert(i, str)
-        busRoute_searchListBox.bind('<<ListboxSelect>>', show_busRouteInfo)
+            busRoute_selectListBox.insert(i, str)
+        busRoute_selectListBox.bind('<<ListboxSelect>>', show_busRouteInfo)
     else:
         # === [routeId]를 기준 ===
         url_busRoute = 'http://apis.data.go.kr/6410000/busrouteservice/getBusRouteInfoItem'
         params_busRoute = {
             'serviceKey': 'xmFs5IrPwwEJmSe8Pu6PcPO8P6+iVF5mfCz/yTZ3WPmUjST6KEDtbhXDh9hAil7MP4Mhgli8CiW91OzNPR5N+A==', \
-            'routeId': busRoute_search_term}
+            'routeId': server.busInfo}
         busRoute_response = requests.get(url_busRoute, params=params_busRoute)
         busRoute_root = ET.fromstring(busRoute_response.text)
         busRoute_items = busRoute_root.findall(".//busRouteInfoItem")
@@ -339,14 +381,16 @@ def search_bus():
 
         # 정보 부분 (notebook)
         global InfoLabel, ST, notebook
-        busRoute_notebook = tkinter.ttk.Notebook(window)
-        busRoute_notebook.place(x=25, y=450, width=535, height=280)
+        infoWindow = Tk()
+        infoWindow.title("버스 노선 상세 정보")
+        busRoute_notebook = tkinter.ttk.Notebook(infoWindow)
+        busRoute_notebook.pack()
         style = tkinter.ttk.Style()
         style.theme_use('default')
         style.configure('TNotebook.Tab', background="gray")
         style.map("TNotebook", background=[("selected", "gray")])
 
-        ST = st.ScrolledText(window, font=server.fontInfo, cursor="arrow")
+        ST = st.ScrolledText(infoWindow, font=server.fontInfo, cursor="arrow")
         busRoute_notebook.add(ST, text="Info")
 
         info = '[노선번호]' + '\n' + busRoute_items[0].findtext("routeName") + \
@@ -364,7 +408,7 @@ def show_busRouteInfo(event):
     global busRoute_items
     selectedBus = event.widget.curselection()[0]
     busRoute_notebook = tkinter.ttk.Notebook(window)
-    busRoute_notebook.place(x=25, y=450, width=535, height=280)
+    busRoute_notebook.place(x=510, y=450, width=535, height=280)
 
     # 정보 부분 (notebook)
     global InfoLabel, ST, notebook

@@ -36,7 +36,7 @@ smallSearchImage = PhotoImage(file='image/smallSearch_retro.png')  # search
 
 filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
 emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
-mapImage = PhotoImage(file='image/map_icon2.png')  # map image
+mapImage = PhotoImage(file='image/map.png')  # map image
 emptymarkImage = PhotoImage(file='image/white_bookmark.png')  # mark image
 markImage = PhotoImage(file='image/bookmark.png')  # mark image
 telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
@@ -52,6 +52,7 @@ labelImage = PhotoImage(file='image/label.png')  # label image
 googleLinkImage = PhotoImage(file='image/google.png')  # label image
 naverImage = PhotoImage(file='image/naver.png')  # label image
 naverMapImage = PhotoImage(file='image/google_map.png')  # label image
+busInfoImage = PhotoImage(file='image/busInfo_Image.png')  # label image
 
 # === load font ===
 fontNormal = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
@@ -60,6 +61,10 @@ fontInfo = font.Font(window, size=10, family='G마켓 산스 TTF Medium')
 fontList = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
 
 # === shared datas ===
+cityInfo = None
+stationInfo = None
+busInfo = None
+
 info_text = None  # 정류소 정보
 #hospital_name = None
 station_name = None # 정류소 이름
