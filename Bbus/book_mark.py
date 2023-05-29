@@ -39,7 +39,7 @@ def onMarkPopup():  # 북마크 팝업을 띄움
     fontInfo = font.Font(popup, size=10, family='G마켓 산스 TTF Medium')
     fontList = font.Font(popup, size=14, family='G마켓 산스 TTF Medium')
 
-    # 북마크 병원 목록 리스트박스
+    # 북마크 정류소, 노선 목록 리스트박스
     global listBox
     ListScrollBar = Scrollbar(popup)
     listBox = Listbox(popup, selectmode='extended', font=fontList, width=10, height=15, \
@@ -65,17 +65,17 @@ def onMarkPopup():  # 북마크 팝업을 띄움
     ListScrollBar.place(x = 390, y = 0, width=20, height=340)
     ListScrollBar.config(command=listBox.yview, cursor="sb_v_double_arrow")
 
-    # 선택된 병원의 정보 출력하는 ScrolledText
+    # 선택된 정류소, 노선의 정보 출력하는 ScrolledText
     global ST
     ST = st.ScrolledText(popup, font=fontInfo, cursor="arrow")
     ST.place(x = 390 + 20, y = 0, width=385, height=340)
 
-    # 선택된 병원 삭제 버튼
+    # 선택된 북마크 삭제 버튼
     global deleteButton
-    deleteButton = Button(popup, font=fontList, text='북마크에서 해당 병원 제외하기', command=deleteHospital)
+    deleteButton = Button(popup, font=fontList, text='북마크에서 해당 정보 제외하기', command=deleteHospital)
     deleteButton.place(x = 0, y = 340, width=800, height=30)
 
-def deleteHospital():       # 북마크에서 선택된 병원을 삭제하는 함수
+def deleteHospital():       # 북마크에서 선택된 정보를 삭제하는 함수
     global ST
     if len(server.MarkDict) == 0:   # 북마크가 빈 상태에서 삭제 버튼을 누른 경우
         msgbox.showinfo("알림", "북마크가 비어있습니다.")

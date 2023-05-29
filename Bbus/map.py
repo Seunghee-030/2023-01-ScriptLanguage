@@ -22,16 +22,16 @@ isSatellite = True  # 현재 위성 모드인지, 노말 모드인지 확인하�
 # === load image ===
 satelliteImage = PhotoImage(file='image/satellite.png')  # 위성 아이콘
 normalImage = PhotoImage(file='image/normal_map.png')  # 기본 지도 아이콘
-hospitalImage = PhotoImage(file='image/hospital.png')  # 병원 아이콘
+hospitalImage = PhotoImage(file='image/hospital.png')  # 정류소 아이콘
 searchImage = PhotoImage(file='image/little_search.png')  # 돋보기 아이콘
 
 
 # === functions ===
 def onMapPopup():
     # 런처에서 지도 버튼을 누를 경우 실행
-    # 선택한 병원의 지도를 보여주는 팝업을 띄움
-    if server.station_name == None:  # 예외처리: 사용자가 병원을 선택하지 않고, 버튼을 누를 경우
-        msgbox.showinfo("알림", "목록에서 병원을 먼저 선택해주십시오.")
+    # 선택한 정류소의 지도를 보여주는 팝업을 띄움
+    if server.station_name == None:  # 예외처리: 사용자가 정류소를 선택하지 않고, 버튼을 누를 경우
+        msgbox.showinfo("알림", "목록에서 정류소를 먼저 선택해주십시오.")
         return
 
     global popup
@@ -41,8 +41,8 @@ def onMapPopup():
 
     fontNormal = font.Font(popup, size=18, family='G마켓 산스 TTF Medium')
 
-    if server.latitude == 0 and server.longitude == 0:  # API에서 병원의 주소 정보를 제공하지 않는 경우
-        emptyLabel = Label(popup, width=800, height=600, text="해당 병원의 지도 정보가 없습니다.", font=fontNormal)
+    if server.latitude == 0 and server.longitude == 0:  # API에서 정류소의 주소 정보를 제공하지 않는 경우
+        emptyLabel = Label(popup, width=800, height=600, text="해당 정류소의 지도 정보가 없습니다.", font=fontNormal)
         emptyLabel.pack()
 
     else:
@@ -82,7 +82,7 @@ def onSearch():
     map_widget.set_zoom(15)
 
 
-def onHospital():  # 원래 병원 위치로 이동하는 함수
+def onHospital():  # 원래 정류소 위치로 이동하는 함수
     map_widget.set_zoom(15)
     map_widget.set_position(marker_1.position[0], marker_1.position[1])
 
@@ -107,7 +107,7 @@ def add_marker_event(coords):  # 마우스 우클릭으로 마커를 추가하�
     new_marker = map_widget.set_marker(coords[0], coords[1], text="new marker")
     map_widget.set_path([coords, marker_1.position])
 
-
+3
 if __name__ == '__main__':
     print("map.py runned\n")
 else:

@@ -440,6 +440,8 @@ def clear_window():
     Label(window, image=server.backGroundImage).place(x=0, y=0)
     Button(window, image=server.homeIcon, relief="flat",
            cursor="hand2", command=InitScreen).place(x=900, y=12, width=40, height=40)
+
+
 # === functions ===
 def InitScreen():  # 메인 GUI 창을 시작하는 함수
     clear_window()
@@ -459,8 +461,11 @@ def InitScreen():  # 메인 GUI 창을 시작하는 함수
     LineNumberLabel.place(x=700, y=530, width=200, height=40)
 
     # 로고 버튼 - git 주소 연결
-    Button(window, image=server.logo, bg="white", command=onLogo, relief="flat",
-                            cursor="hand2", overrelief="groove").place(x=100, y=150, width=500, height=500)
+    #label = Label(window, image=server.photo)
+    #label.place(x=100, y=150, width=500, height=500)
+    Button(window, image=server.photo, command=onLogo, relief="flat",
+           cursor="hand2", overrelief="groove").place(x=100, y=150, width=500, height=500)
+
     # 시/군 검색 버튼 - 시/군 검색 페이지로
     Button(window, image=server.searchImage, bg="white", activebackground="dark grey", relief="flat",
                             cursor="hand2", command=open_city_window).place(x=700, y=190, width=200, height=80)
@@ -475,20 +480,10 @@ def InitScreen():  # 메인 GUI 창을 시작하는 함수
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     print("main laucher runned\n")
     InitScreen()
+    server.update_frame()    # Gif update 함수
     window.mainloop()
 else:
     print("main launcher imported\n")

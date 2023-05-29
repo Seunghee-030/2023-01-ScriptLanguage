@@ -12,6 +12,7 @@ from io import BytesIO
 import urllib
 import urllib.request
 from PIL import Image, ImageTk
+import PIL.Image, PIL.ImageTk, PIL.ImageSequence
 
 
 # === main window ===
@@ -43,6 +44,12 @@ telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
 
 logo = PhotoImage(file='image/뻐스.png')  # telegram image
 logoImage = ImageTk.PhotoImage(im)  # logo image
+
+# === GIF 이미지 로드 ===
+gifImage = PIL.Image.open('image/춘식.gif')
+photo = PIL.ImageTk.PhotoImage(gifImage)
+iterator = PIL.ImageSequence.Iterator(gifImage)
+gifPhoto = PhotoImage(file= 'image/춘식.gif')
 
 homeImage = PhotoImage(file='image/home.png')
 homeIcon = PhotoImage(file='image/home_icon.png')
@@ -81,7 +88,22 @@ city_list = ['가평군', '고양시', '과천시', '광명시', '광주시', '�
 
 hList = [0 for i in city_list]
 
+# GIF 프레임 업데이트 함수
+def update_frame():
+    global gifImage, iterator
+    try:
+        # GIF 이미지 업데이트
+        gifImage.seek(gifImage.tell() + 1)
+    except EOFError:
+        # 마지막 프레임에 도달한 경우 처음으로 되돌아감
+        print('EOFError')
+        gifImage.seek(0)
+    # PhotoImage 객체 업데이트
+    photo.paste(next(iterator))
+    #print("gifImage:",gifImage)
 
+    # 다음 프레임 업데이트 예약
+    window.after(100, update_frame)  # 10ms마다 업데이트 (0.1초)
 
 
 # 인증키
