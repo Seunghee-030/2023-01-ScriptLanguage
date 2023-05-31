@@ -227,6 +227,10 @@ def search_busStationInfo():
     busArrival_root = ET.fromstring(busArrival_response.text)
     busArrival_items = busArrival_root.findall(".//busArrivalList")
 
+    # === 해당 정류소 북마크에 저장 ===
+    Button(window, image=server.boomarkImage, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=makeBookMark).place(x=920, y=480, width=50, height=50)
+
     # === [station_id] 기준으로 해당 정류장에 도착하는 리스트 생성 ===
     # === 스크롤바[sbusSLB_scrollbar] 및 리스트 박스[busStation_searchListBox] 위치 지정 ===
 

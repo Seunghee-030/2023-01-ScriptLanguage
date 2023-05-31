@@ -46,7 +46,7 @@ logo = PhotoImage(file='image/뻐스.png')  # telegram image
 logoImage = ImageTk.PhotoImage(im)  # logo image
 
 # === GIF 이미지 로드 ===
-gifImage = PIL.Image.open('image/춘식.gif')
+gifImage = PIL.Image.open('image/main_image_gif.gif')
 photo = PIL.ImageTk.PhotoImage(gifImage)
 iterator = PIL.ImageSequence.Iterator(gifImage)
 gifPhoto = PhotoImage(file= 'image/춘식.gif')
@@ -60,6 +60,7 @@ googleLinkImage = PhotoImage(file='image/google.png')  # label image
 naverImage = PhotoImage(file='image/naver.png')  # label image
 naverMapImage = PhotoImage(file='image/google_map.png')  # label image
 busInfoImage = PhotoImage(file='image/busInfo_Image.png')  # label image
+boomarkImage = PhotoImage(file='image/white_bookmark.png')  # label image
 
 # === load font ===
 fontNormal = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
@@ -100,12 +101,14 @@ def update_frame():
         gifImage.seek(0)
     # PhotoImage 객체 업데이트
     photo.paste(next(iterator))
-    #print("gifImage:",gifImage)
+
+    # GIF 이미지가 더 이상 없을 때 첫 번째 프레임으로 넘어가는 코드 추가
+    print("frame : ", gifImage.tell())
+    if gifImage.tell() >= gifImage.n_frames:
+        gifImage.seek(0)
 
     # 다음 프레임 업데이트 예약
     window.after(100, update_frame)  # 10ms마다 업데이트 (0.1초)
-
-
 # 인증키
 gggokrKey = '10c9c010f1c84f0380fdbcd4c7e01cd7'
 datagokrKey = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg=='

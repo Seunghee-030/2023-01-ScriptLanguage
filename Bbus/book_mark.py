@@ -25,7 +25,7 @@ try:
 except:
     pass
 
-selHospital = None
+selStation = None
 
 # === functions ===
 def onMarkPopup():  # 북마크 팝업을 띄움
@@ -81,21 +81,21 @@ def deleteHospital():       # 북마크에서 선택된 정보를 삭제하는 �
         msgbox.showinfo("알림", "북마크가 비어있습니다.")
         popup.focus_set()
     else:
-        if selHospital in server.MarkDict:
-            del server.MarkDict[selHospital]
+        if selStation in server.MarkDict:
+            del server.MarkDict[selStation]
 
             f = open('mark', 'wb')
             pickle.dump(server.MarkDict, f)
             f.close()
             ST.delete('1.0', END)
 
-def showInfo(event):   # 병원 리스트박스에서 병원 선택 시 정보 출력하는 함수
-    global InfoLabel, ST, selHospital
+def showInfo(event):   # 리스트박스에서 정류소 선택 시 정보 출력하는 함수
+    global InfoLabel, ST, selStation
     selection = event.widget.curselection()
     if selection:
         index = selection[0]
         data = event.widget.get(index)
-        selHospital = data
+        selStation = data
 
         if data in server.MarkDict:
             info = server.MarkDict[data]
@@ -108,9 +108,9 @@ def showInfo(event):   # 병원 리스트박스에서 병원 선택 시 정보 �
 def makeBookMark():
     # 북마크를 추가하는 함수
     # 런쳐 노트북 3페이지에서 북마크 저장 버튼을 눌렀을 시 실행
-    if server.hospital_name:
-        if server.hospital_name in server.MarkDict:
-            msgbox.showinfo("알림", "이미 북마크에 추가한 병원입니다.")
+    if server.station_name:
+        if server.station_name in server.MarkDict:
+            msgbox.showinfo("알림", "이미 북마크에 추가한 정류소입니다.")
 
         else:
             text = server.info_text + '\n\n' + '[MEMO]' + '\n' + server.memo_text
@@ -122,7 +122,7 @@ def makeBookMark():
                 server.MarkDict = pickle.load(f)
                 f.close()
 
-                server.MarkDict[server.hospital_name] = text
+                server.MarkDict[server.station_name] = text
 
                 f = open('mark', 'wb')
                 pickle.dump(server.MarkDict, f)
@@ -135,7 +135,7 @@ def makeBookMark():
                 print(server.MarkDict)
 
             else:
-                server.MarkDict[server.hospital_name] = text
+                server.MarkDict[server.station_name] = text
                 f = open('mark', 'wb')
                 pickle.dump(server.MarkDict, f)
                 f.close()
@@ -150,7 +150,7 @@ def makeBookMark():
                 msgbox.showinfo("알림", "성공적으로 북마크를 저장했습니다.")
 
     else:   # 예외 처리
-        msgbox.showinfo("알림", "목록에서 병원을 먼저 선택해주십시오.")
+        msgbox.showinfo("알림", "목록에서 정류소를 먼저 선택해주십시오.")
 
 
 if __name__ == '__main__':
