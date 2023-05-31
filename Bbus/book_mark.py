@@ -35,7 +35,7 @@ def onMarkPopup():  # 북마크 팝업을 띄움
     popup.geometry("800x370+450+200")
     popup.title("북마크")
     popup.resizable(False, False)
-
+    print("북마크 띄움")
     fontInfo = font.Font(popup, size=10, family='G마켓 산스 TTF Medium')
     fontList = font.Font(popup, size=14, family='G마켓 산스 TTF Medium')
 

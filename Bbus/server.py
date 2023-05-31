@@ -93,22 +93,18 @@ hList = [0 for i in city_list]
 def update_frame():
     global gifImage, iterator
     try:
-        # GIF 이미지 업데이트
-        gifImage.seek(gifImage.tell() + 1)
-    except EOFError:
-        # 마지막 프레임에 도달한 경우 처음으로 되돌아감
-        print('EOFError')
-        gifImage.seek(0)
-    # PhotoImage 객체 업데이트
-    photo.paste(next(iterator))
+        gifImage.seek(gifImage.tell() + 1)      # GIF 이미지 업데이트
+        photo.paste(next(iterator))     # PhotoImage 객체 업데이트
 
-    # GIF 이미지가 더 이상 없을 때 첫 번째 프레임으로 넘어가는 코드 추가
-    print("frame : ", gifImage.tell())
-    if gifImage.tell() >= gifImage.n_frames:
+    except EOFError:      # 마지막 프레임에 도달한 경우 처음으로 되돌아감
         gifImage.seek(0)
+        iterator = PIL.ImageSequence.Iterator(gifImage)
+
+    #print("frame : ", gifImage.tell())
 
     # 다음 프레임 업데이트 예약
-    window.after(100, update_frame)  # 10ms마다 업데이트 (0.1초)
+    window.after(150, update_frame)  # 150ms마다 업데이트 (0.15초)
+
 # 인증키
 gggokrKey = '10c9c010f1c84f0380fdbcd4c7e01cd7'
 datagokrKey = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg=='

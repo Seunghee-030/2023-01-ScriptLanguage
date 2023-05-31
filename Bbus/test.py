@@ -1,30 +1,44 @@
-import tkinter as tk
-import PIL.Image, PIL.ImageTk, PIL.ImageSequence
-def update_frame():
-    try:
-        # GIF 이미지 업데이트
-        image.seek(image.tell() + 1)
-    except EOFError:
-        # 마지막 프레임에 도달한 경우 처음으로 되돌아감
-        image.seek(0)
+from tkinter import *
+from PIL import Image, ImageTk, ImageSequence
 
-    # PhotoImage 객체 업데이트
-    photo.paste(next(iterator))
+# Create a window
+window = Tk()
 
-    # 다음 프레임 업데이트 예약
-    window.after(100, update_frame)  # 100ms마다 업데이트 (0.1초)
-# Tkinter 창 생성
-window = tk.Tk()
+# Load the GIF image
+gifImage = Image.open("image/main_image_gif.gif")
 
-# GIF 이미지 로드
-image = PIL.Image.open("image/춘식.gif")
-iterator = PIL.ImageSequence.Iterator(image)
-photo = PIL.ImageTk.PhotoImage(image)
+# Create an iterator to iterate through the frames of the GIF
+iterator = ImageSequence.Iterator(gifImage)
 
-# 이미지를 표시할 레이블 생성
-label = tk.Label(window, image=photo)
+# Create a PhotoImage object to display the first frame of the GIF
+photo = ImageTk.PhotoImage(next(iterator))
+
+# Create a label to display the GIF
+label = Label(window, image=photo)
 label.pack()
 
-update_frame()
-# 창 실행
+# GIF frame update function
+def update_frame():
+    global gifImage, iterator
+    try:
+        # Update the GIF image
+        gifImage.seek(gifImage.tell() + 1)
+        photo.paste(next(iterator))
+    except EOFError:
+        # If it reaches the last frame, go back to the first frame
+        gifImage.seek(0)
+        iterator = ImageSequence.Iterator(gifImage)
+        photo.paste(next(iterator))
+
+    # Update the PhotoImage object
+
+
+
+    # Schedule the next frame update
+    window.after(100, update_frame)  # Update every 10ms (0.1 seconds)
+
+# Schedule the first frame update
+window.after(100, update_frame)
+
+# Start the main loop
 window.mainloop()
