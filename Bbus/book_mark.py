@@ -13,6 +13,7 @@ functions
 import pickle   # 피클 모듈을 사용한 북마크
 from click import command
 import server
+import telegram
 import tkinter.messagebox as msgbox
 import os
 from tkinter import *
@@ -31,8 +32,8 @@ selStation = None
 def onMarkPopup():  # 북마크 팝업을 띄움
     global popup
     print("graph button clicked")
-    popup = Toplevel()
-    popup.geometry("800x370+450+200")
+    popup = Toplevel(bg="#000fa3")
+    popup.geometry("720x600")
     popup.title("북마크")
     popup.resizable(False, False)
     print("북마크 띄움")
@@ -42,7 +43,7 @@ def onMarkPopup():  # 북마크 팝업을 띄움
     # 북마크 정류소, 노선 목록 리스트박스
     global listBox
     ListScrollBar = Scrollbar(popup)
-    listBox = Listbox(popup, selectmode='extended', font=fontList, width=10, height=15, \
+    listBox = Listbox(popup, selectmode='extended', font=fontList, bg="light gray", width=10, height=15, \
         borderwidth=5, relief='ridge', yscrollcommand=ListScrollBar.set, cursor="hand2")
 
     dirpath = os.getcwd()
@@ -60,22 +61,27 @@ def onMarkPopup():  # 북마크 팝업을 띄움
         i = i + 1
 
     listBox.bind('<<ListboxSelect>>', showInfo)
-    listBox.place(x = 10, y = 0, width=390 - 10, height=340)
+    listBox.place(x = 30, y = 30, width=300, height=350)
 
-    ListScrollBar.place(x = 390, y = 0, width=20, height=340)
+    ListScrollBar.place(x = 390, y = 30, width=20, height=350)
     ListScrollBar.config(command=listBox.yview, cursor="sb_v_double_arrow")
 
     # 선택된 정류소, 노선의 정보 출력하는 ScrolledText
     global ST
-    ST = st.ScrolledText(popup, font=fontInfo, cursor="arrow")
-    ST.place(x = 390 + 20, y = 0, width=385, height=340)
+    ST = st.ScrolledText(popup, font=fontInfo, bg="light gray", cursor="arrow")
+    ST.place(x = 390 - 40, y = 30, width=340, height=350)
 
     # 선택된 북마크 삭제 버튼
     global deleteButton
-    deleteButton = Button(popup, font=fontList, text='북마크에서 해당 정보 제외하기', command=deleteHospital)
-    deleteButton.place(x = 0, y = 340, width=800, height=30)
+    deleteButton = Button(popup, font=fontList, text='북마크에서 삭제', bg="#000fa3", command=deleteBookmarkInfo)
+    deleteButton.place(x = 450, y = 400+30, width=150, height=50)
 
-def deleteHospital():       # 북마크에서 선택된 정보를 삭제하는 함수
+    # 선택된 정보 텔레그램 전송 버튼
+    global telegramButton
+    telegramButton = Button(popup, font=fontList, text='해당 정보 전송', bg="#000fa3", command=telegram.sendSelectedInfo)
+    telegramButton.place(x = 450, y = 480+30, width=150, height=50)
+
+def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하는 함수
     global ST
     if len(server.MarkDict) == 0:   # 북마크가 빈 상태에서 삭제 버튼을 누른 경우
         msgbox.showinfo("알림", "북마크가 비어있습니다.")
@@ -113,7 +119,7 @@ def makeBookMark():
             msgbox.showinfo("알림", "이미 북마크에 추가한 정류소입니다.")
 
         else:
-            text = server.info_text + '\n\n' + '[MEMO]' + '\n' + server.memo_text
+            text = server.stationInfo + '\n\n' + '[MEMO]' + '\n' + server.memo_text
 
             dirpath = os.getcwd()
 

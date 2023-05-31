@@ -17,7 +17,7 @@ def sendSelectedInfo():     # 선택된 정류소 정보를 텔레그램으로 �
         msgbox.showinfo("알림", "정류소를 먼저 선택해주십시오.")
         return
     bot = telepot.Bot("")
-    bot.sendMessage('', server.info_text + '\n\n' + '[검색결과]' + '\n' +'https://www.google.com/search?q=' + server.hospital_name)
+    bot.sendMessage('', server.info_text + '\n\n' + '[검색결과]' + '\n' +'https://www.google.com/search?q=' + server.station_name)
     msgbox.showinfo("알림", "메시지를 성공적으로 보냈습니다.")
 
 if __name__ == '__main__':

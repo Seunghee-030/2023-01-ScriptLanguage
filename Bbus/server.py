@@ -42,7 +42,7 @@ emptymarkImage = PhotoImage(file='image/white_bookmark.png')  # mark image
 markImage = PhotoImage(file='image/bookmark.png')  # mark image
 telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
 
-logo = PhotoImage(file='image/뻐스.png')  # telegram image
+logo = PhotoImage(file='image/뻐스.png')  # logo image
 logoImage = ImageTk.PhotoImage(im)  # logo image
 
 # === GIF 이미지 로드 ===

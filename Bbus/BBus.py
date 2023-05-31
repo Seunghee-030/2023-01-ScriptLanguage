@@ -465,9 +465,7 @@ def InitScreen():  # 메인 GUI 창을 시작하는 함수
     LineNumberLabel.place(x=700, y=530, width=200, height=40)
 
     # 로고 버튼 - git 주소 연결
-    #label = Label(window, image=server.photo)
-    #label.place(x=100, y=150, width=500, height=500)
-    Button(window, image=server.photo, command=onLogo, relief="flat",bg="dark blue",
+    Button(window, image=server.photo, command=onLogo, relief="flat",bg="#000fa3",
            cursor="hand2", overrelief="groove").place(x=100, y=150, width=500, height=500)
 
     # 시/군 검색 버튼 - 시/군 검색 페이지로
