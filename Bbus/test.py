@@ -1,44 +1,46 @@
-from tkinter import *
-from PIL import Image, ImageTk, ImageSequence
+import tkinter as tk
 
-# Create a window
-window = Tk()
+# tkinter 창 생성
+window = tk.Tk()
+window.title("그래프 배치 예제")
 
-# Load the GIF image
-gifImage = Image.open("image/main_image_gif.gif")
+# 캔버스 크기 설정
+canvas_width = 450
+canvas_height = 400
 
-# Create an iterator to iterate through the frames of the GIF
-iterator = ImageSequence.Iterator(gifImage)
+# Canvas 생성
+canvas = tk.Canvas(window, width=canvas_width, height=canvas_height)
+canvas.pack()
 
-# Create a PhotoImage object to display the first frame of the GIF
-photo = ImageTk.PhotoImage(next(iterator))
+# 그래프 그리기 함수
+def draw_graph():
+    bus_num = int(entry.get())  # 입력된 busNum 값 가져오기
 
-# Create a label to display the GIF
-label = Label(window, image=photo)
-label.pack()
+    if bus_num < 1:
+        bus_num = 1
+    elif bus_num > 10:
+        bus_num = 10
 
-# GIF frame update function
-def update_frame():
-    global gifImage, iterator
-    try:
-        # Update the GIF image
-        gifImage.seek(gifImage.tell() + 1)
-        photo.paste(next(iterator))
-    except EOFError:
-        # If it reaches the last frame, go back to the first frame
-        gifImage.seek(0)
-        iterator = ImageSequence.Iterator(gifImage)
-        photo.paste(next(iterator))
+    graph_count = bus_num  # 그래프 개수
+    max_graph_width = 50  # 그래프 최대 폭
 
-    # Update the PhotoImage object
+    total_width = graph_count * max_graph_width
+    start_x = (canvas_width - total_width) / 2  # 그래프 시작 x 좌표
+    y_offset = 10  # 그래프 시작 y 좌표
+    graph_width = min(max_graph_width, (canvas_width - (graph_count - 1) * max_graph_width) / graph_count)  # 그래프 폭
 
+    for i in range(graph_count):
+        x_offset = start_x + (graph_width + max_graph_width) * i  # 그래프의 x 위치
 
+        canvas.create_rectangle(x_offset, y_offset, x_offset + graph_width, canvas_height - y_offset, fill="blue")
 
-    # Schedule the next frame update
-    window.after(100, update_frame)  # Update every 10ms (0.1 seconds)
+# 그래프 그리기 버튼 생성
+button = tk.Button(window, text="그래프 그리기", command=draw_graph)
+button.pack()
 
-# Schedule the first frame update
-window.after(100, update_frame)
+# busNum 입력 받을 Entry 생성
+entry = tk.Entry(window)
+entry.pack()
 
-# Start the main loop
+# tkinter 창 실행
 window.mainloop()

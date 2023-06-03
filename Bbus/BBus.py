@@ -18,6 +18,8 @@ from link import *
 # === import ===
 import tkinter.ttk
 from server import window
+from tkinter import messagebox
+import graph
 
 # ==== 필요한 전역 변수 선언 ====
 # 각 사이트 인증키
@@ -62,6 +64,7 @@ def open_city_window():
 
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음 ===
         # === [search_city] 함수로 이동 ===
+    server.isStation = False
     Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
            cursor="hand2", command=search_station_with_citySLB).place(x=190, y=450, width=150, height=60)
 
@@ -69,18 +72,26 @@ def open_city_window():
 def search_station_with_citySLB():
     # === 검색어 [citySLB]에서 받아오기 ===
     global city_selectListBox, station_selectListBox
-    server.cityInfo = cityList[city_selectListBox.curselection()[0]]
-
+    if city_selectListBox.curselection():
+        server.cityInfo = cityList[city_selectListBox.curselection()[0]]
+    else:
+        messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")
+        return
     # === 선택하지 않았을 때, 경고 메시지 - 만들어야 함 !!! ===
 
-
-    # === 추가 설명 Label ===
-    Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
-          fg='white', anchor='w').place(x=40, y=500, width=450, height=60)
-    Label(window, text="[ SYSTEM ] :  검색어 - "+ server.cityInfo, font=standardFont, bg='#000fa3',
-          fg='white', anchor='w').place(x=40, y=550, width=400, height=60)
-    Label(window, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
-          fg='white', anchor='w').place(x=40, y=620, width=400, height=60)
+    if not server.isStation:
+        # === 추가 설명 Label ===
+        Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=500, width=450, height=60)
+        Label(window, text="[ SYSTEM ] :  검색어 - "+ server.cityInfo, font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=550, width=400, height=60)
+        Label(window, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=620, width=400, height=60)
+    else:
+        Label(window, text="[ SYSTEM ] :  검색어 - "+ server.cityInfo, font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=600, width=400, height=60)
+        Label(window, text="[ SYSTEM ] :  잠시만 기다려 주세요... _ ", font=standardFont, bg='#000fa3',
+              fg='white', anchor='w').place(x=40, y=670, width=400, height=60)
 
     # === 유도 멘트 제공 ===
     Label(window, text="[ SYSTEM ] :  검색할 정류장을 선택하세요 _", font=standardFont,  bg='#000fa3', fg='white', anchor='w').place(
@@ -114,27 +125,30 @@ def search_station_with_citySLB():
         str = server.cityInfo + " " + item.findtext("STATION_NM_INFO")
         station_selectListBox.insert(i + 1, str)
 
-    # === 해당 함수 다시 시작하는 버튼, 작업관리자 줄에 존재 ===
-    Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
-           cursor="hand2", command=search_station_with_citySLB).place(x=190, y=450, width=150, height=60)
 
     # === 버튼 누르면 정류장의 상세 정보 출력을 위해 준비하는 함수로 이동 [readyto_search_BusStation_fromCity]===
     Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
            cursor="hand2", command=readyto_search_busStationInfo_fromCity).place(x=800, y=650, width=150, height=60)
 
-    # === 다시 [city_ListBox] 눌렀다면, 대기 멘트들과 정류장 목록 삭제할 수 있도록 !!! - 만들어야 함 ===
-    city_selectListBox.bind('<<ListboxSelect>>', resetTo_searchCity)
 
-def resetTo_searchCity(event):
-    pass
+
 
 def readyto_search_busStationInfo_fromCity():
     global station_selectListBox
-    server.stationInfo = station_selectListBox.get(station_selectListBox.curselection())[4:]
+    if station_selectListBox.curselection():
+        server.stationInfo = station_selectListBox.get(station_selectListBox.curselection())[4:]
+    else:
+        messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")
+        return
 
     # 윈도우 정리하기
     clear_window()
-    Label(window, font=server.fontList, text=server.stationInfo + " 정류장에 대한 정보입니다.").place(x=20, y=85, width=560, height=40)
+
+    Label(window, text="[ SYSTEM ] " +server.stationInfo + " 정류장에 대한 정보입니다.", font=standardFont, bg='#000fa3', fg='white', anchor='w', wraplength=400).place(
+        x=40, y=90, width=450, height=60)
+    Label(window, text="[ 시 / 군 검색 기능 ]", font=TempFont, compound='center', bg='#000fa3', fg='white').place(x=300, y=10, width=400, height=40)
+    Button(window, text="[ 시 / 군 ]", font=smallFont, compound='center', bg='#b8b8b8', fg='black', relief='raised',
+           command=open_city_window).place(x=60, y=757, width=100, height=40)
 
     search_busStationInfo()
 
@@ -181,19 +195,31 @@ def open_busStation_window():
 
 
     # === 검색 버튼 - 일시적인 사용이므로 변수 제작하지 않음. ===
+    server.isStation = True
     Button(window, image=server.smallSearchImage, bg="white", activebackground="dark grey", relief="flat",
            cursor="hand2", command=readyto_search_busStation).place(x=350, y=530, width=150, height=60)
+    Button(window, image=server.stationList, bg="white", activebackground="dark grey", relief="flat",
+           cursor="hand2", command=search_station_with_citySLB).place(x=30, y=530, width=150, height=60)
 
 def readyto_search_busStation():
     global city_selectListBox, busStation_search_text
-    server.stationInfo = busStation_search_text.get("1.0", END).strip()
-    server.cityInfo = cityList[city_selectListBox.curselection()[0]]
+    if city_selectListBox.curselection():
+        server.stationInfo = busStation_search_text.get("1.0", END).strip()
+        server.cityInfo = cityList[city_selectListBox.curselection()[0]]
+    else:
+        messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")
+        return
+
+    if server.stationInfo == "":
+        messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")
+        return
+
 
     # === 추가 설명 Label ===
     Label(window, text="======================================================================", font=standardFont, bg='#000fa3',
           fg='white', anchor='w').place(x=40, y=580, width=450, height=60)
-    Label(window, text="[ SYSTEM ] : " + server.stationInfo +" 정류장 버스 목록을\n 불러오는 중입니다...", font=standardFont, bg='#000fa3',
-          fg='white', anchor='w').place(x=40, y=650, width=400, height=60)
+    Label(window, text="[ SYSTEM ] : " + server.stationInfo +" 정류장 버스 목록을 불러오는 중입니다...", font=standardFont, bg='#000fa3',
+          fg='white', anchor='w', wraplength=400).place(x=40, y=650, width=400, height=60)
     search_busStationInfo()
 
 # search_busStationInfo() : 정류장 검색어 기준으로 정류장에 도착하는 버스 목록 생성하는 함수
@@ -218,6 +244,9 @@ def search_busStationInfo():
             server.longitude = float(item.find("WGS84_LOGT").text)
             server.station_name = server.stationInfo
 
+    if station_id == "":
+        messagebox.showinfo("알림", server.stationInfo + " 정류장이 존재하지 않습니다!")
+        return
     global busArrival_items
     # === 검색어[station_id] 기준으로 경기도 버스 도착 정보 조회 데이터 load  ===
     url_busArrival = 'http://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList?'
@@ -259,6 +288,7 @@ def search_busStationInfo():
     # === 해당 [station_id]를 경유하는 [routeID]의 노선 번호 및 여러 데이터 [busStation_searchListBox]에 저장하기 ===
     global busRoutes_items
     busRoutes_items = [server.stationInfo]
+    busItems_toGraph = []
     for i, item in enumerate(busArrival_items, start=1):
         params_busRoute = {'serviceKey': server.datagokrKey, 'routeId': item.findtext("routeId")}
 
@@ -268,6 +298,14 @@ def search_busStationInfo():
 
         str = busRoutes_items[i][0].findtext("routeName") + "번 버스"
         bus_selectListBox.insert(i, str)
+
+        if item.findtext("predictTime2") == '':
+            busItems_toGraph.append((busRoutes_items[i][0].findtext("routeName"), 1))
+        else:
+            busItems_toGraph.append((busRoutes_items[i][0].findtext("routeName"), 2))
+
+    # === 그래프로 현재 정류장에 도착할 버스 종류와, 개수 그림 ===
+    graph.drawGraph(busItems_toGraph, window)
 
 # 도착 정보 출력
 def show_busStationInfo() :

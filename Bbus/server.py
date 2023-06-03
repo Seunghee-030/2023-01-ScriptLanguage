@@ -34,6 +34,7 @@ im = Image.open(BytesIO(raw_data))
 
 searchImage = PhotoImage(file='image/search_retro.png')  # search image
 smallSearchImage = PhotoImage(file='image/smallSearch_retro.png')  # search
+stationList = PhotoImage(file='image/stationList.png')  # search
 
 filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
 emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
@@ -72,6 +73,8 @@ fontList = font.Font(window, size=14, family='G마켓 산스 TTF Medium')
 cityInfo = None
 stationInfo = None
 busInfo = None
+
+isStation = False
 
 info_text = None  # 정류소 정보
 #hospital_name = None
