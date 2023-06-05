@@ -1,12 +1,6 @@
 '''
 book_mark.py
 런처에서 북마크 버튼을 누르면 실행되는 모듈입니다.
-
-functions
-- onMarkPopup
-- deleteHospital
-- showInfo
-- makeBookMark
 '''
 
 # === import ===

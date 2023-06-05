@@ -20,13 +20,7 @@ import os
 import pickle
 
 key = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg' #'여기에 API KEY를 입력하세요'
-# server.datagokrKey
 TOKEN = '6068757360:AAExM9m867OHNkcSxS0SteOJTn1f-A5k2ew'
-# findall(".//busArrivalList")
-baseurl = 'http://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList'
-
-station_id = 200000177 #임의 지정
-params_busArrival = {'serviceKey': key, 'stationId': station_id}
 bot = telepot.Bot(TOKEN)
 MAX_MSG_LENGTH = 300
 station_id = ""
