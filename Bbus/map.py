@@ -23,14 +23,14 @@ searchImage = PhotoImage(file='image/little_search.png')  # 돋보기 아이콘
 def onMapPopup():
     # 런처에서 지도 버튼을 누를 경우 실행
     # 선택한 정류소의 지도를 보여주는 팝업을 띄움
-    if server.station_name == None:  # 예외처리: 사용자가 정류소를 선택하지 않고, 버튼을 누를 경우
+    if server.stationInfo == None:  # 예외처리: 사용자가 정류소를 선택하지 않고, 버튼을 누를 경우
         msgbox.showinfo("알림", "목록에서 정류소를 먼저 선택해주십시오.")
         return
 
     global popup
     popup = Toplevel()
     popup.geometry("800x600+100+100")
-    popup.title("<" + server.station_name + "> 의 지도")
+    popup.title("<" + server.stationInfo + "> 의 지도")
 
     fontNormal = font.Font(popup, size=18, family='G마켓 산스 TTF Medium')
 

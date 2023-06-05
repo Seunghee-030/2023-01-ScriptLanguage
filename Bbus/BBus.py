@@ -137,6 +137,7 @@ def readyto_search_busStationInfo_fromCity():
     global station_selectListBox
     if station_selectListBox.curselection():
         server.stationInfo = station_selectListBox.get(station_selectListBox.curselection())[4:]
+        server.station_name = server.stationInfo
     else:
         messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")
         return
@@ -205,6 +206,7 @@ def readyto_search_busStation():
     global city_selectListBox, busStation_search_text
     if city_selectListBox.curselection():
         server.stationInfo = busStation_search_text.get("1.0", END).strip()
+        server.station_name = server.stationInfo
         server.cityInfo = cityList[city_selectListBox.curselection()[0]]
     else:
         messagebox.showinfo("알림", "검색어가 존재하지 않습니다!")

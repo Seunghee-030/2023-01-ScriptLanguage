@@ -40,7 +40,7 @@ filterImage = PhotoImage(file='image/filter_icon.png')  # filter image
 emailImage = PhotoImage(file='image/mail_icon3.png')  # mail image
 mapImage = PhotoImage(file='image/map.png')  # map image
 emptymarkImage = PhotoImage(file='image/white_bookmark.png')  # mark image
-markImage = PhotoImage(file='image/bookmark.png')  # mark image
+markImage = PhotoImage(file='image/white_bookmark.png')  # mark image
 telegramImage = PhotoImage(file='image/telegram_icon.png')  # telegram image
 
 logo = PhotoImage(file='image/뻐스.png')  # logo image
