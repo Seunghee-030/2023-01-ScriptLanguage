@@ -26,7 +26,7 @@ def drawGraph(busItems_toGraph, window):
 
     standardFont = font.Font(graphCanvas, size=15, family='DungGeunMo')
 
-    Label(window, text="[ SYSTEM ] :  정류장의 버스 현황입니다.", font=standardFont, bg='#000fa3', fg='white', anchor='w').place(x=40, y=150, width=450, height=60)
+    Label(window, text="[ SYSTEM ] :  운행 중인 버스 현황입니다.", font=standardFont, bg='#000fa3', fg='white', anchor='w').place(x=40, y=150, width=450, height=60)
 
     busNum = len(busItems_toGraph)
     if busNum == 0:

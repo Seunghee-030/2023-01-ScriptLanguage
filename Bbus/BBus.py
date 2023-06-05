@@ -242,7 +242,11 @@ def search_busStationInfo():
             station_id = item.findtext("STATION_ID")
             server.latitude = float(item.find("WGS84_LAT").text)
             server.longitude = float(item.find("WGS84_LOGT").text)
-            server.station_name = server.stationInfo
+
+            server.memo_text = '\n\n[정류장 ID]' + item.findtext("STATION_ID")
+            server.memo_text += '\n\n[지역]' + item.findtext("SIGUN_NM")
+            server.memo_text += '\n\n[정류장명(한글)]' + item.findtext("STATION_NM_INFO")
+            server.memo_text += '\n\n[정류장명(영문)]' + item.findtext("ENG_STATION_NM_INFO")
 
     if station_id == "":
         messagebox.showinfo("알림", server.stationInfo + " 정류장이 존재하지 않습니다!")
@@ -257,7 +261,7 @@ def search_busStationInfo():
     busArrival_items = busArrival_root.findall(".//busArrivalList")
 
     # === 해당 정류소 북마크에 저장 ===
-    Button(window, image=server.boomarkImage, bg="white", activebackground="dark grey", relief="flat",
+    Button(window, image=server.boomarkImage, bg='#000fa3', activebackground="dark grey", relief="flat",
            cursor="hand2", command=makeBookMark).place(x=920, y=480, width=50, height=50)
 
     # === [station_id] 기준으로 해당 정류장에 도착하는 리스트 생성 ===
@@ -482,6 +486,8 @@ def clear_window():
     Label(window, image=server.backGroundImage).place(x=0, y=0)
     Button(window, image=server.homeIcon, relief="flat",
            cursor="hand2", command=InitScreen).place(x=900, y=12, width=40, height=40)
+    Button(window, image=server.markImage, relief="flat",
+           cursor="hand2", command=onMarkPopup).place(x=830, y=12, width=40, height=40)
 
 
 # === functions ===

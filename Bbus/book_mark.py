@@ -27,7 +27,6 @@ except:
     pass
 
 selStation = None
-
 # === functions ===
 def onMarkPopup():  # 북마크 팝업을 띄움
     global popup
@@ -37,13 +36,12 @@ def onMarkPopup():  # 북마크 팝업을 띄움
     popup.title("북마크")
     popup.resizable(False, False)
     print("북마크 띄움")
-    fontInfo = font.Font(popup, size=10, family='G마켓 산스 TTF Medium')
-    fontList = font.Font(popup, size=14, family='G마켓 산스 TTF Medium')
+    standardFont = font.Font(popup, size=15, family='DungGeunMo')
 
     # 북마크 정류소, 노선 목록 리스트박스
     global listBox
     ListScrollBar = Scrollbar(popup)
-    listBox = Listbox(popup, selectmode='extended', font=fontList, bg="light gray", width=10, height=15, \
+    listBox = Listbox(popup, selectmode='extended', font=standardFont, bg="light gray", width=10, height=15, \
         borderwidth=5, relief='ridge', yscrollcommand=ListScrollBar.set, cursor="hand2")
 
     dirpath = os.getcwd()
@@ -53,7 +51,6 @@ def onMarkPopup():  # 북마크 팝업을 띄움
         f.close()
         server.MarkDict = dic
 
-    print(server.MarkDict.keys())
     i = 0
     for hospital, info in server.MarkDict.items():
         print(hospital)
@@ -68,17 +65,17 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
     # 선택된 정류소, 노선의 정보 출력하는 ScrolledText
     global ST
-    ST = st.ScrolledText(popup, font=fontInfo, bg="light gray", cursor="arrow")
+    ST = st.ScrolledText(popup, font=standardFont, bg="light gray", cursor="arrow")
     ST.place(x = 390 - 40, y = 30, width=340, height=350)
 
     # 선택된 북마크 삭제 버튼
     global deleteButton
-    deleteButton = Button(popup, font=fontList, text='북마크에서 삭제', bg="#000fa3", command=deleteBookmarkInfo)
+    deleteButton = Button(popup, font=standardFont, text='북마크에서 삭제', bg="#000fa3", fg='white', command=deleteBookmarkInfo)
     deleteButton.place(x = 450, y = 400+30, width=150, height=50)
 
     # 선택된 정보 텔레그램 전송 버튼
     global telegramButton
-    telegramButton = Button(popup, font=fontList, text='해당 정보 전송', bg="#000fa3", command=telegram.sendSelectedInfo)
+    telegramButton = Button(popup, font=standardFont, text='해당 정보 전송', bg="#000fa3", fg='white',command=telegram.sendSelectedInfo)
     telegramButton.place(x = 450, y = 480+30, width=150, height=50)
 
 def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하는 함수
@@ -93,7 +90,26 @@ def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하�
             f = open('mark', 'wb')
             pickle.dump(server.MarkDict, f)
             f.close()
+        if not selStation in server.MarkDict:
+            msgbox.showinfo("알림", "삭제되었습니다.")
+            global listBox
+            listBox.delete(0, END)
+            dirpath = os.getcwd()
+            if os.path.isfile(dirpath + '\mark'):
+                f = open('mark', 'rb')
+                dic = pickle.load(f)
+                f.close()
+                server.MarkDict = dic
+
+            i = 0
+            for hospital, info in server.MarkDict.items():
+                print(hospital)
+                listBox.insert(i, hospital)
+                i = i + 1
+            ST.configure(state="normal")  # 수정 가능으로 풀어놨다가,
             ST.delete('1.0', END)
+            ST.insert(INSERT, ' ')
+            ST.configure(state="disabled")  # 수정 불가능(읽기 전용)으로 변경
 
 def showInfo(event):   # 리스트박스에서 정류소 선택 시 정보 출력하는 함수
     global InfoLabel, ST, selStation
@@ -114,12 +130,12 @@ def showInfo(event):   # 리스트박스에서 정류소 선택 시 정보 출�
 def makeBookMark():
     # 북마크를 추가하는 함수
     # 런쳐 노트북 3페이지에서 북마크 저장 버튼을 눌렀을 시 실행
-    if server.station_name:
-        if server.station_name in server.MarkDict:
+    if server.stationInfo:
+        if server.stationInfo in server.MarkDict:
             msgbox.showinfo("알림", "이미 북마크에 추가한 정류소입니다.")
 
         else:
-            text = server.stationInfo + '\n\n' + '[MEMO]' + '\n' + server.memo_text
+            text = server.stationInfo + '\n\n[MEMO]' + server.memo_text
 
             dirpath = os.getcwd()
 
@@ -128,7 +144,7 @@ def makeBookMark():
                 server.MarkDict = pickle.load(f)
                 f.close()
 
-                server.MarkDict[server.station_name] = text
+                server.MarkDict[server.stationInfo] = text
 
                 f = open('mark', 'wb')
                 pickle.dump(server.MarkDict, f)
@@ -138,7 +154,7 @@ def makeBookMark():
                 server.MarkDict = pickle.load(f)
                 f.close()
 
-                print(server.MarkDict)
+                print(server.MarkDict.keys())
 
             else:
                 server.MarkDict[server.station_name] = text

@@ -65,28 +65,6 @@ def onMapPopup():
         map_widget.set_zoom(15)  # 0~19 (19 is the highest zoom level)
 
 
-def onSearch():
-    # 지도 팝업에서 주소 입력 시 실행
-    # 새 주소에 마커 추가
-    global destAddr, marker_2
-    destAddr = addressLabel.get()
-    marker_2 = map_widget.set_address(destAddr, marker=True, marker_color_outside="black", marker_color_circle="white",
-                                      text_color="black")
-    marker_2.set_text(destAddr)
-
-    path_1 = map_widget.set_path([marker_1.position, marker_2.position])
-    map_widget.set_position(server.latitude, server.longitude)
-
-    addressLabel.delete(0, 'end')
-
-    map_widget.set_zoom(15)
-
-
-def onHospital():  # 원래 정류소 위치로 이동하는 함수
-    map_widget.set_zoom(15)
-    map_widget.set_position(marker_1.position[0], marker_1.position[1])
-
-
 def onSat():  # 지도를 위성 지도로 바꾸는 함수
     global isSatellite
     if isSatellite:
