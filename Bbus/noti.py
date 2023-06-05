@@ -72,12 +72,12 @@ def getData(SIGUN_param, STATION_param):
                            '\n' + '[운행지역]' + '\n' + busRoutes_items[i][0].findtext("regionName") + \
                            '\n' + '[노선ID]' + '\n' + busRoutes_items[i][0].findtext("routeId")
                     res_list.append(info)
-
+                    res_list.append("[도착정보]")
                     if item.findtext("predictTime1") != '':
-                        res_list.append(item.findtext("predictTime1") + "분 후 도착 예정\n")
-
+                        res_list.append(" - " + item.findtext("predictTime1") + "분 후 도착 예정")
                     if item.findtext("predictTime2") != '':
-                        res_list.append(item.findtext("predictTime2") + "분 후 도착 예정")
+                        res_list.append(" - " + item.findtext("predictTime2") + "분 후 도착 예정")
+                    res_list.append("\n")
     else:
         res_list = ''
     return res_list
