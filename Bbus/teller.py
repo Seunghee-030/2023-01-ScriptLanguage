@@ -67,9 +67,14 @@ def handle(msg):
             replySTData(args[2], chat_id, args[1])
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     elif text.startswith('북마크확인'):
         print('try to 북마크확인')
         noti.getBookMark(chat_id)
+=======
+    elif text.startswith('북마크')  and len(args)>1:
+        print('try to 북마크')
+>>>>>>> parent of d5e7284 (텔레그램봇 merge)
 =======
     elif text.startswith('북마크')  and len(args)>1:
         print('try to 북마크')
