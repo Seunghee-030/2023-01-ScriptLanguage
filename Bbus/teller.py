@@ -103,6 +103,5 @@ pprint( bot.getMe() )
 bot.message_loop(handle)
 
 print('Listening...')
-
 while 1:
   time.sleep(10)
