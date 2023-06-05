@@ -27,11 +27,11 @@ def replySTData(STATION_param, user, SIGUN_param='군포시'):
         noti.sendMessage(user, SIGUN_param + ' %s에 해당하는 정류소가 없습니다.' % STATION_param)
 
 def save(user, STATION_param, SIGUN_param):
-    conn = sqlite3.connect('../../telelog/users.db')
+    conn = sqlite3.connect('telelog/users.db')
     cursor = conn.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, 시/군 TEXT, 정류소 TEXT, PRIMARY KEY(user, SIGUN_param, STATION_param) )')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, sigun TEXT, station TEXT, PRIMARY KEY(user, sigun, station) )')
     try:
-        cursor.execute('INSERT INTO users(user, 시/군, 정류소) VALUES ("%s", "%s", "%s")' % (user, SIGUN_param, STATION_param))
+        cursor.execute('INSERT INTO users(user, sigun, station) VALUES ("%s", "%s", "%s")' % (user, SIGUN_param, STATION_param))
     except sqlite3.IntegrityError:
         noti.sendMessage(user, '이미 해당 정보가 저장되어 있습니다.')
         return
@@ -40,12 +40,12 @@ def save(user, STATION_param, SIGUN_param):
         conn.commit()
 
 def check( user ):
-    conn = sqlite3.connect('../../telelog/users.db')
+    conn = sqlite3.connect('telelog/users.db')
     cursor = conn.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, 시/군 TEXT, 정류소 TEXT, PRIMARY KEY(user, SIGUN_param, STATION_param) )')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, sigun TEXT, station TEXT, PRIMARY KEY(user, sigun, station) )')
     cursor.execute('SELECT * from users WHERE user="%s"' % user)
     for data in cursor.fetchall():
-        row = 'id:' + str(data[0]) + ', SIGUN:' + data[1]+ ', STATION:' + data[2]
+        row =  '시/군:' + data[2]+ ', 정류소명:' + data[1] + ', 정류소ID:' + str(data[0])
         noti.sendMessage(user, row)
 
 
@@ -65,14 +65,9 @@ def handle(msg):
             noti.sendMessage(chat_id, '정확한 파라미터를 입력해주세요.')
         else:
             replySTData(args[2], chat_id, args[1])
-<<<<<<< HEAD
     elif text.startswith('북마크확인'):
         print('try to 북마크확인')
         noti.getBookMark(chat_id)
-=======
-    elif text.startswith('북마크')  and len(args)>1:
-        print('try to 북마크')
->>>>>>> parent of d5e7284 (텔레그램봇 merge)
     elif text.startswith('저장')  and len(args)>1:
         print('try to 저장 ', args[1], args[2])
         save( chat_id, args[1], args[2])
@@ -80,12 +75,19 @@ def handle(msg):
         print('try to 확인')
         check( chat_id )
     elif text.startswith('안녕'):
-        noti.sendMessage(chat_id, '안녕하세요. 저는 경기도 버스 정보알리미 \n 뻐스봇 입니다.')
+        noti.sendMessage(chat_id, '안녕하세요. 저는 경기도 버스 정보알리미 '
+                                  '\n<뻐스봇> 입니다.\n'
+                                  '무엇을 도와드릴까요?\n\n'
+                                  '정류소 [지역이름] [정류소명] \n'
+                                  '북마크확인\n'
+                                  '저장 [지역이름] [정류소명]\n'
+                                  '확인 \n'
+                                  '중 하나의 명령을 입력하세요.')
     else:
-
         noti.sendMessage(chat_id, """모르는 명령어입니다.\n
         정류소 [지역이름] [정류소명] \n
-        저장 [지역이름] \n
+        북마크확인\n
+        저장 [지역이름] [정류소명]\n
         확인 \n
         중 하나의 명령을 입력하세요.\n
         """)

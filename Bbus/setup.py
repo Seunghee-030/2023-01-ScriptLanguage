@@ -10,12 +10,11 @@ setup(
     name='BBus',
     version='1.0',
 
-    py_modules=['book_mark', 'graph', 'link', 'map', 'server', 'teller', 'noti', 'BBus'],
+    py_modules=['book_mark', 'graph', 'link', 'map', 'server', 'telegram_bot', 'telegram', 'BBus'],
 
-    packages=['image', 'font', 'telelog'],
+    packages=['image', 'font'],
     package_data={
         'image': ['*.png', '*.html','*.jpg','*.gif'],
-        'font': ['*.ttf'],
-        'telelog': ['*.db']},
+        'font': ['*.ttf']},
     ext_modules=[module_cLink]
 )
