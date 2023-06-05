@@ -82,6 +82,7 @@ def handle(msg):
     elif text.startswith('안녕'):
         noti.sendMessage(chat_id, '안녕하세요. 저는 경기도 버스 정보알리미 \n 뻐스봇 입니다.')
     else:
+
         noti.sendMessage(chat_id, """모르는 명령어입니다.\n
         정류소 [지역이름] [정류소명] \n
         저장 [지역이름] \n
