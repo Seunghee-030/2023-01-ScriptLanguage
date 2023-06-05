@@ -1,13 +1,6 @@
 '''
 map.py
-런처에서 지도 버튼을 누르면 실행되는 모듈입니다.
-
-functions
-- onMapPopup
-- onSearch
-- onHospital
-- onSat
-- add_marker_event
+지도 버튼을 누르면 실행되는 모듈입니다.
 '''
 
 # === import ===

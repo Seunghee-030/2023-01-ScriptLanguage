@@ -15,6 +15,9 @@ import xml.etree.ElementTree as ET
 import requests
 import server
 import BBus
+import tkinter.messagebox as msgbox
+import os
+import pickle
 
 key = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg' #'여기에 API KEY를 입력하세요'
 # server.datagokrKey
@@ -27,6 +30,19 @@ params_busArrival = {'serviceKey': key, 'stationId': station_id}
 bot = telepot.Bot(TOKEN)
 MAX_MSG_LENGTH = 300
 station_id = ""
+
+# === function ===
+
+def getBookMark(chat_id):  # 피클 모듈을 사용해 북마크 목록 불러와 전송하는 함수
+    dirpath = os.getcwd()
+    if os.path.isfile(dirpath + '\mark'):
+        f = open('mark', 'rb')
+        dic = pickle.load(f)
+        f.close()
+
+        for value in dic.values():
+            sendMessage(chat_id, value)
+
 # 정류소 검색
 def getData(SIGUN_param, STATION_param):
     res_list = []

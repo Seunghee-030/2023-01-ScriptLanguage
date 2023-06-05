@@ -1,12 +1,6 @@
 '''
 link.py
-런처에서 링크 버튼을 누르면 실행되는 모듈입니다.
-
-functions
-- onLogo
-- onNaverLink
-- onGoogleLink
-- onNaverMapLink
+링크 버튼을 누르면 실행되는 모듈입니다.
 '''
 
 # === import ===

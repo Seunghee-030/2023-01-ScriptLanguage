@@ -6,7 +6,7 @@ import sqlite3
 import telepot
 from pprint import pprint
 from datetime import date, datetime
-
+import tkinter.messagebox as msgbox
 import noti
 
 
@@ -49,6 +49,7 @@ def check( user ):
         noti.sendMessage(user, row)
 
 
+
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
     if content_type != 'text':
@@ -66,6 +67,7 @@ def handle(msg):
             replySTData(args[2], chat_id, args[1])
     elif text.startswith('북마크확인'):
         print('try to 북마크확인')
+        noti.getBookMark(chat_id)
     elif text.startswith('저장')  and len(args)>1:
         print('try to 저장 ', args[1], args[2])
         save( chat_id, args[1], args[2])

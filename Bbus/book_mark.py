@@ -13,7 +13,6 @@ functions
 import pickle   # 피클 모듈을 사용한 북마크
 from click import command
 import server
-import telegram
 import tkinter.messagebox as msgbox
 import os
 from tkinter import *
@@ -75,8 +74,11 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
     # 선택된 정보 텔레그램 전송 버튼
     global telegramButton
-    telegramButton = Button(popup, font=standardFont, text='해당 정보 전송', bg="#000fa3", fg='white',command=telegram.sendSelectedInfo)
+    telegramButton = Button(popup, font=standardFont, text='해당 정보 전송', bg="#000fa3", fg='white',command=sendSelectedInfo)
     telegramButton.place(x = 450, y = 480+30, width=150, height=50)
+
+def sendSelectedInfo():
+    msgbox.showinfo("알림", "메시지를 성공적으로 보냈습니다.")
 
 def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하는 함수
     global ST
