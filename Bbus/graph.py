@@ -46,8 +46,9 @@ def drawGraph(busItems_toGraph, window):
     for i in range(0, busNum):
         x1 = start_x + (rectWidth + gap) * i
         x2 = x1 + rectWidth
-        graphCanvas.create_rectangle(x1, graph_height - i[1]*100, x2, graph_height, fill='white')
-        Label(graphCanvas, text=i[0], font=standardFont, bg='#000fa3', fg='white', anchor='w', wraplength=10).place(x=x1+(rectWidth//3), y=graph_height+10)
+        graphCanvas.create_rectangle(x1, graph_height - busItems_toGraph[i][1]*100, x2, graph_height, fill='white')
+        Label(graphCanvas, text=busItems_toGraph[i][0], font=standardFont, bg='#000fa3', fg='white', anchor='w', wraplength=10).place(x=x1+(rectWidth//3), y=graph_height+10)
+        Label(graphCanvas, text=str(busItems_toGraph[i][1])+" 대", font=standardFont, bg='#000fa3', fg='white', anchor='w', wraplength=40).place(x=x1, y=graph_height - busItems_toGraph[i][1]*100-30)
 
 if __name__ == '__main__':
     print("graph.py runned\n")
