@@ -84,6 +84,7 @@ def handle(msg):
                                   '확인 \n'
                                   '중 하나의 명령을 입력하세요.')
     else:
+
         noti.sendMessage(chat_id, """모르는 명령어입니다.\n
         정류소 [지역이름] [정류소명] \n
         북마크확인\n
