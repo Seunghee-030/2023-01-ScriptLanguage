@@ -1,9 +1,0 @@
-diff a/Bbus/teller.py b/Bbus/teller.py	(rejected hunks)
-@@ -77,6 +77,7 @@
- +>>>>>>> parent of d5e7284 (텔레그램봇 merge)
- +=======
-      elif text.startswith('북마크')  and len(args)>1:
-+         print('try to 북마크')
- +>>>>>>> parent of d5e7284 (텔레그램봇 merge)
- +=======
- +    elif text.startswith('북마크')  and len(args)>1:
