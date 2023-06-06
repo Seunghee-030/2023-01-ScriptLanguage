@@ -38,7 +38,21 @@ def save(user, STATION_param, SIGUN_param):
     else:
         noti.sendMessage(user, '저장되었습니다.')
         conn.commit()
-
+def delete(user, STATION_param, SIGUN_param):
+    conn = sqlite3.connect('telelog/users.db')
+    cursor = conn.cursor()
+    try:
+        cursor.execute('DELETE FROM users WHERE user = ? AND sigun = ? AND station = ?', (user, SIGUN_param, STATION_param))
+        deleted_rows = cursor.rowcount
+        if deleted_rows > 0:
+            noti.sendMessage(user, '정보가 삭제되었습니다.')
+        else:
+            noti.sendMessage(user, '해당 정보를 찾을 수 없습니다.')
+    except sqlite3.Error as e:
+        noti.sendMessage(user, '정보 삭제 중 오류가 발생했습니다.')
+    finally:
+        conn.commit()
+        conn.close()
 def check( user ):
     conn = sqlite3.connect('telelog/users.db')
     cursor = conn.cursor()
@@ -46,9 +60,10 @@ def check( user ):
     cursor.execute('SELECT * from users WHERE user="%s"' % user)
     for data in cursor.fetchall():
         row =  '시/군:' + data[2]+ ', 정류소명:' + data[1] + ', 정류소ID:' + str(data[0])
-        noti.sendMessage(user, row)
-
-
+        if row:
+            noti.sendMessage(user, row)
+        else:
+            noti.sendMessage(user, row)
 
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
@@ -71,6 +86,9 @@ def handle(msg):
     elif text.startswith('저장')  and len(args)>1:
         print('try to 저장 ', args[1], args[2])
         save( chat_id, args[1], args[2])
+    elif text.startswith('삭제')  and len(args)>1:
+        print('try to 삭제 ', args[1], args[2])
+        delete( chat_id, args[1], args[2])
     elif text.startswith('확인'):
         print('try to 확인')
         check( chat_id )
@@ -81,6 +99,7 @@ def handle(msg):
                                   '정류소 [지역이름] [정류소명] \n'
                                   '북마크확인\n'
                                   '저장 [지역이름] [정류소명]\n'
+                                  '삭제 [지역이름] [정류소명]\n'
                                   '확인 \n'
                                   '중 하나의 명령을 입력하세요.')
     else:
@@ -88,6 +107,7 @@ def handle(msg):
         정류소 [지역이름] [정류소명] \n
         북마크확인\n
         저장 [지역이름] [정류소명]\n
+        삭제 [지역이름] [정류소명]\n
         확인 \n
         중 하나의 명령을 입력하세요.\n
         """)
