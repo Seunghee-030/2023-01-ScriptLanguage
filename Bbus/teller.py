@@ -53,13 +53,14 @@ def delete(user, STATION_param, SIGUN_param):
     finally:
         conn.commit()
         conn.close()
+
 def check( user ):
     conn = sqlite3.connect('telelog/users.db')
     cursor = conn.cursor()
     cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, sigun TEXT, station TEXT, PRIMARY KEY(user, sigun, station) )')
     cursor.execute('SELECT * from users WHERE user="%s"' % user)
     for data in cursor.fetchall():
-        row =  '시/군:' + data[2]+ ', 정류소명:' + data[1] + ', 정류소ID:' + str(data[0])
+        row =  '시/군:' + data[2]+ ', 정류소명:' + data[1]
         if row:
             noti.sendMessage(user, row)
         else:
