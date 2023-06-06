@@ -20,13 +20,8 @@ import os
 import pickle
 
 key = 'djFNBIwaWVJkvgD56MeKPoMOwQXZfH7Xf7YsT2RWf5OcKHKeOh9vJzssSBS4FfZlPWSGtpOPWp7rEUFjILX4tg' #'여기에 API KEY를 입력하세요'
-# server.datagokrKey
 TOKEN = '6068757360:AAExM9m867OHNkcSxS0SteOJTn1f-A5k2ew'
-# findall(".//busArrivalList")
 baseurl = 'http://apis.data.go.kr/6410000/busarrivalservice/getBusArrivalList'
-
-station_id = 200000177 #임의 지정
-params_busArrival = {'serviceKey': key, 'stationId': station_id}
 bot = telepot.Bot(TOKEN)
 MAX_MSG_LENGTH = 300
 station_id = ""
@@ -109,24 +104,26 @@ def sendMessage(user, msg):
     except:
         traceback.print_exc(file=sys.stdout)
 
-def run(date_param, param='11710'):
-    conn = sqlite3.connect('../../Telegram_Bot_BBus_EX/logs.db')
+def run(user, STATION_param, SIGUN_param):
+    conn = sqlite3.connect('telelog/logs.db')
     cursor = conn.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS logs( user TEXT, log TEXT, PRIMARY KEY(user, log) )')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, sigun TEXT, station TEXT, PRIMARY KEY(user, sigun, station) )')
+
     conn.commit()
 
-    user_cursor = sqlite3.connect('../../Telegram_Bot_BBus_EX/users.db').cursor()
-    user_cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, location TEXT, PRIMARY KEY(user, location) )')
+    user_cursor = sqlite3.connect('telelog/users.db').cursor()
+    user_cursor.execute('CREATE TABLE IF NOT EXISTS users( user TEXT, sigun TEXT, station TEXT, PRIMARY KEY(user, sigun, station) )')
     user_cursor.execute('SELECT * from users')
 
     for data in user_cursor.fetchall():
-        user, param = data[0], data[1]
-        print(user, date_param, param)
-        res_list = getData( param, date_param )
+        user, SIGUN_param, STATION_param = data[0], data[2], data[1]
+        print(user, SIGUN_param, STATION_param)
+        res_list = getData(user, SIGUN_param, STATION_param )
         msg = ''
         for r in res_list:
             try:
-                cursor.execute('INSERT INTO logs (user,log) VALUES ("%s", "%s")'%(user,r))
+                cursor.execute('INSERT INTO users(user, sigun, station) VALUES ("%s", "%s", "%s")' % (user, SIGUN_param, STATION_param))
+
             except sqlite3.IntegrityError:
                 # 이미 해당 데이터가 있다는 것을 의미합니다.
                 pass
