@@ -8,7 +8,6 @@ functions
 - showInfo
 - makeBookMark
 '''
-
 # === import ===
 import pickle   # 피클 모듈을 사용한 북마크
 from click import command
@@ -79,6 +78,7 @@ def onMarkPopup():  # 북마크 팝업을 띄움
 
 def sendSelectedInfo():
     msgbox.showinfo("알림", "메시지를 성공적으로 보냈습니다.")
+    exec(open("teller.py").read())
 
 def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하는 함수
     global ST
@@ -112,6 +112,7 @@ def deleteBookmarkInfo():       # 북마크에서 선택된 정보를 삭제하�
             ST.delete('1.0', END)
             ST.insert(INSERT, ' ')
             ST.configure(state="disabled")  # 수정 불가능(읽기 전용)으로 변경
+            exec(open("teller.py").read())
 
 def showInfo(event):   # 리스트박스에서 정류소 선택 시 정보 출력하는 함수
     global InfoLabel, ST, selStation
